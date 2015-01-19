@@ -2,7 +2,6 @@ package com.org.source.rss;
 
 import java.util.List;
 
-import android.R.integer;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -36,11 +35,13 @@ public class RSSContentWindow extends Window
         mContentContainer.setBackgroundColor(Color.WHITE);
         setContentView(mContentContainer, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         
-        mContentView = new TextView(context);
-        mContentView.setTextColor(Color.BLACK);
         int leftOrRightPadding = ScreenUtils.dpToPxInt(context, 8);
         int upOrDownPadding = ScreenUtils.dpToPxInt(context, 20);
-        mContentView.setPadding(leftOrRightPadding, upOrDownPadding, leftOrRightPadding, upOrDownPadding);
+        mContentContainer.setPadding(leftOrRightPadding, upOrDownPadding, leftOrRightPadding, upOrDownPadding);
+
+        mContentView = new TextView(context);
+        mContentView.setTextColor(Color.BLACK);
+
         mContentView.setTextSize(TypedValue.COMPLEX_UNIT_PX, ScreenUtils.dpToPxInt(context, 16));
         mContentView.setLineSpacing(ScreenUtils.dpToPx(context, 3), 1.0f);
         
