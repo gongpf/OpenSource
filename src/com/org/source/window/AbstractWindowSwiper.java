@@ -2,29 +2,8 @@ package com.org.source.window;
 
 import android.view.MotionEvent;
 
-public abstract class AbstractWindowSwiper implements IWindowAnimator
+public abstract class AbstractWindowSwiper implements WindowSwipeCallBack, IWindowAnimator
 {
-    public abstract class WindowSwipeListener
-    {
-        public void onInit()
-        {
-        }
-
-        public void onStart()
-        {
-        }
-
-        public void onMove(float dx, float dy)
-        {
-        }
-
-        public void onEnd()
-        {
-        }
-    }
-    
-    private WindowSwipeListener mWindowSwipeListener;
-
     protected enum Direction {NONE, LEFT, RIGHT, DOWN, UP};
     protected Direction mDirection = Direction.NONE;
 
@@ -34,10 +13,6 @@ public abstract class AbstractWindowSwiper implements IWindowAnimator
     protected float mDownPointX;
     protected float mDownPointY;
     
-    public void setWindowSwipeListener(WindowSwipeListener l)
-    {
-        mWindowSwipeListener = l;
-    }
     
     public boolean onInterceptTouchEvent(MotionEvent event)
     {
@@ -50,10 +25,7 @@ public abstract class AbstractWindowSwiper implements IWindowAnimator
         updateLastPoint(event);
         updateDownPoint(event);
         
-        if (null != mWindowSwipeListener)
-        {
-            mWindowSwipeListener.onInit();
-        }
+        onInit();
     }
     
     public void handleMoveEvent(MotionEvent event)
@@ -64,25 +36,15 @@ public abstract class AbstractWindowSwiper implements IWindowAnimator
         if (mDirection == Direction.NONE && Math.sqrt(dx * dx + dy * dy) > 8)
         {
             initDirection(dx, dy);
-
-            if (null != mWindowSwipeListener)
-            {
-                mWindowSwipeListener.onStart();
-            }
+            onStart();
         }
 
-        if (null != mWindowSwipeListener)
-        {
-            mWindowSwipeListener.onMove(dx, dy);
-        }
+        onMove(dx, dy);
     }
 
     public void handleUpOrCancelEvent()
     {
-        if (null != mWindowSwipeListener)
-        {
-            mWindowSwipeListener.onEnd();
-        }
+        onEnd();
     }
 
     private void initDirection(float dx, float dy)
