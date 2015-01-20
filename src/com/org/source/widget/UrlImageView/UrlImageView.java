@@ -22,6 +22,13 @@ public class UrlImageView extends ImageView
         {
             setDrawable(drawable);
         };
+        
+        @Override
+        public void setImageDrawable(Bitmap bitmap)
+        {
+            Bitmap bitmap2 = getBitmap(bitmap, 500 / 300f);
+            super.setImageDrawable(bitmap2);
+        }
     };
 
     public UrlImageView(Context context)
@@ -76,5 +83,35 @@ public class UrlImageView extends ImageView
     public void setInitImageDrawable(Drawable drawable)
     {
         mUrlBitmap.setInitImageDrawable(drawable);
+    }
+    
+    private Bitmap getBitmap(Bitmap source, float rotation)
+    {
+        if (rotation <= 0 || null == source)
+        {
+            return null;
+        }
+
+        int width = source.getWidth();
+        int height = source.getHeight();
+        
+        int targetHeight = (int) (width / rotation);
+        int targetWidth = (int) (height * rotation);
+        
+        if (targetHeight >= height)
+        {
+            targetWidth = Math.min(targetWidth, width);
+            targetHeight = height;
+        }
+        else 
+        {
+            height = Math.min(targetHeight, height);
+            targetWidth = width;
+        }
+        
+        int deWidth = (width - targetWidth) / 2;
+        int deHeight = (height - targetHeight) / 2;
+        
+        return Bitmap.createBitmap(source, deWidth, deHeight, targetWidth, targetHeight);
     }
 }

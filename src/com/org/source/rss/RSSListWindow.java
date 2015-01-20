@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.view.Gravity;
 import android.view.View;
@@ -47,6 +48,8 @@ public class RSSListWindow extends Window
         mAdapter = new RssAdapter();
         mListView.setAdapter(mAdapter);
         mListView.setBackgroundColor(Color.WHITE);
+        mListView.setDivider(new ColorDrawable(Color.GRAY));
+        mListView.setDividerHeight(1);
     }
     
     private void initItemClickListener()
@@ -174,6 +177,7 @@ public class RSSListWindow extends Window
         {
             setOrientation(LinearLayout.HORIZONTAL);
             setGravity(Gravity.CENTER_VERTICAL);
+            setPadding(25, 25, 25, 25);
             
             LinearLayout textContainer = new LinearLayout(context);
             textContainer.setOrientation(LinearLayout.VERTICAL);
