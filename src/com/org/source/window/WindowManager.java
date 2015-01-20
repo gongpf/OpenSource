@@ -6,10 +6,11 @@ import android.app.Activity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.org.source.event.ISystemEventHandler;
 import com.org.source.eventbus.EventBus;
 import com.org.source.nineoldandroids.animation.Animator;
 
-public class WindowManager
+public class WindowManager implements ISystemEventHandler
 {
     public enum EventType {UNKOWN, PUSHWINDOW, POPUPWINDOW};
     
@@ -76,6 +77,12 @@ public class WindowManager
         animator.start();
     }
     
+    public void clear()
+    {
+        mViewRoot.removeAllViews();
+        mWindowStack.clear();
+    }
+    
     public void onEventMainThread(WindowEvent event)
     {
         if (null == event)
@@ -91,6 +98,20 @@ public class WindowManager
                 
             case POPUPWINDOW:
                 popWindow();
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onEvent(SystemEvent event)
+    {
+        switch (event.mEventType)
+        {
+            case DESTORY:
+                EventBus.getDefault().unregister(this);
                 break;
 
             default:

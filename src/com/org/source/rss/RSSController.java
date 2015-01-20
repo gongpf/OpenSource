@@ -3,12 +3,13 @@ package com.org.source.rss;
 import android.content.Context;
 
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndEntry;
+import com.org.source.event.ISystemEventHandler;
 import com.org.source.eventbus.EventBus;
 import com.org.source.window.WindowManager;
 import com.org.source.window.WindowManager.WindowEvent;
 
 
-public class RSSController
+public class RSSController implements ISystemEventHandler
 {
     public enum EventType {UNKOWN, OPENCONTENTWINDOW, POPUPWINDOW};
     
@@ -83,5 +84,18 @@ public class RSSController
         }
         
     }
+    
+    @Override
+    public void onEvent(SystemEvent event)
+    {
+        switch (event.mEventType)
+        {
+            case DESTORY:
+                EventBus.getDefault().unregister(this);
+                break;
 
+            default:
+                break;
+        }
+    }
 }

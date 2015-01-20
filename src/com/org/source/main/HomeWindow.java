@@ -62,7 +62,7 @@ public class HomeWindow extends Window implements OnClickListener
     private RSSController mRssController = new RSSController(getContext());
     
     @Override
-    public void onClick(View v)
+    public void onClick(View v) 
     {
         switch (v.getId())
         {

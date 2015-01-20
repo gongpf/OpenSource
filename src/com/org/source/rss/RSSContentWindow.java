@@ -58,6 +58,8 @@ public class RSSContentWindow extends Window
             return ;
         }
         
+        mContentContainer.scrollTo(0, 0);
+        
         mSyndEntry = entry;
 
         SyndContent description = entry.getDescription();
