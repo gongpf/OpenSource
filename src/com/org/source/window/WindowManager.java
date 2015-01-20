@@ -3,6 +3,8 @@ package com.org.source.window;
 import java.util.Stack;
 
 import android.app.Activity;
+import android.content.Context;
+import android.view.KeyEvent;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -20,13 +22,28 @@ public class WindowManager implements ISystemEventHandler
         public Object mObject;
     }
     
+    private class ViewRoot extends FrameLayout
+    {
+        public ViewRoot(Context context)
+        {
+            super(context);
+        }
+        
+        @Override
+        public boolean dispatchKeyEvent(KeyEvent event)
+        {
+            return mWindowStack.size() > 0 ? mWindowStack.peek().dispatchKeyEvent(event) 
+                    : super.dispatchKeyEvent(event);
+        }
+    }
+    
     private final Stack<Window> mWindowStack;
-    private final ViewGroup mViewRoot;
+    private final ViewRoot mViewRoot;
     
     public WindowManager(Activity attachActivity)
     {
         mWindowStack = new Stack<Window>();
-        mViewRoot = new FrameLayout(attachActivity);
+        mViewRoot = new ViewRoot(attachActivity);
         attachActivity.setContentView(mViewRoot);
         EventBus.getDefault().register(this);
     }
