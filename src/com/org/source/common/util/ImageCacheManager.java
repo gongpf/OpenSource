@@ -1,21 +1,21 @@
 package com.org.source.common.util;
 
-import com.org.source.common.entity.CacheObject;
-import com.org.source.common.entity.FailedReason;
-import com.org.source.common.service.impl.FileNameRuleImageUrl;
-import com.org.source.common.service.impl.ImageCache;
-import com.org.source.common.service.impl.ImageSDCardCache;
-import com.org.source.common.service.impl.RemoveTypeLastUsedTimeFirst;
-import com.org.source.common.service.impl.ImageMemoryCache.OnImageCallbackListener;
-import com.org.source.common.service.impl.ImageSDCardCache.OnImageSDCallbackListener;
-import com.org.source.common.service.impl.PreloadDataCache.OnGetDataListener;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
+
+import com.org.source.common.entity.CacheObject;
+import com.org.source.common.entity.FailedReason;
+import com.org.source.common.service.impl.FileNameRuleImageUrl;
+import com.org.source.common.service.impl.ImageCache;
+import com.org.source.common.service.impl.ImageMemoryCache.OnImageCallbackListener;
+import com.org.source.common.service.impl.ImageSDCardCache;
+import com.org.source.common.service.impl.ImageSDCardCache.OnImageSDCallbackListener;
+import com.org.source.common.service.impl.PreloadDataCache.OnGetDataListener;
+import com.org.source.common.service.impl.RemoveTypeLastUsedTimeFirst;
 
 /**
  * ImageCacheManager
@@ -77,10 +77,10 @@ public class ImageCacheManager {
         OnImageCallbackListener imageCallBack = new OnImageCallbackListener() {
 
             @Override
-            public void onGetSuccess(String imageUrl, Bitmap loadedImage, View view, boolean isInCache) {
-                if (view != null && loadedImage != null) {
-                    if (view instanceof ImageView) {
-                        ImageView imageView = (ImageView)view;
+            public void onGetSuccess(String imageUrl, Bitmap loadedImage, Object obj, boolean isInCache) {
+                if (obj != null && loadedImage != null) {
+                    if (obj instanceof ImageView) {
+                        ImageView imageView = (ImageView)obj;
                         imageView.setImageBitmap(loadedImage);
                         // first time show with animation
                         if (!isInCache) {
@@ -94,13 +94,13 @@ public class ImageCacheManager {
             }
 
             @Override
-            public void onPreGet(String imageUrl, View view) {}
+            public void onPreGet(String imageUrl, Object obj) {}
 
             @Override
-            public void onGetFailed(String imageUrl, Bitmap loadedImage, View view, FailedReason failedReason) {}
+            public void onGetFailed(String imageUrl, Bitmap loadedImage, Object obj, FailedReason failedReason) {}
 
             @Override
-            public void onGetNotInCache(String imageUrl, View view) {}
+            public void onGetNotInCache(String imageUrl, Object obj) {}
         };
         imageCache.setOnImageCallbackListener(imageCallBack);
         imageCache.setCacheFullRemoveType(new RemoveTypeLastUsedTimeFirst<Bitmap>());

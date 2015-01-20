@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndContent;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndEntry;
 import com.org.source.common.util.ScreenUtils;
+import com.org.source.widget.UrlImageView.TextViewUrlDrawable;
 import com.org.source.window.Window;
 
 public class RSSContentWindow extends Window
@@ -94,7 +95,7 @@ public class RSSContentWindow extends Window
                 return null;
             }
 
-            return new UrlDrawable(mContentView, source);
+            return new TextViewUrlDrawable(mContentView, source);
         }
     }
 }

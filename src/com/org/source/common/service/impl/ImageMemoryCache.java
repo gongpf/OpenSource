@@ -8,6 +8,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.util.Log;
+import android.view.View;
+
 import com.org.source.common.entity.CacheObject;
 import com.org.source.common.entity.FailedReason;
 import com.org.source.common.entity.FailedReason.FailedType;
@@ -16,14 +24,6 @@ import com.org.source.common.util.ImageUtils;
 import com.org.source.common.util.SizeUtils;
 import com.org.source.common.util.StringUtils;
 import com.org.source.common.util.SystemUtils;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
-import android.view.View;
 
 /**
  * <strong>Image Memory Cache</strong><br/>
@@ -93,11 +93,11 @@ public class ImageMemoryCache extends PreloadDataCache<String, Bitmap> {
      * key is image url, value is the newest view which waiting for image loaded, used when {@link #isOpenWaitingQueue}
      * is false
      **/
-    private transient Map<String, View>          viewMap;
+    private transient Map<String, Object>          objMap;
     /**
      * key is image url, value is view set those waiting for image loaded, used when {@link #isOpenWaitingQueue} is true
      **/
-    private transient Map<String, HashSet<View>> viewSetMap;
+    private transient Map<String, HashSet<Object>> objSetMap;
 
     private transient Handler                    handler;
 
@@ -109,8 +109,8 @@ public class ImageMemoryCache extends PreloadDataCache<String, Bitmap> {
      * @param view
      * @return whether image already in cache or not
      */
-    public boolean get(String imageUrl, View view) {
-        return get(imageUrl, null, view);
+    public boolean get(String imageUrl, Object obj) {
+        return get(imageUrl, null, obj);
     }
 
     /**
@@ -123,14 +123,14 @@ public class ImageMemoryCache extends PreloadDataCache<String, Bitmap> {
      * @param view
      * @return whether image already in cache or not
      */
-    public boolean get(final String imageUrl, final List<String> urlList, final View view) {
+    public boolean get(final String imageUrl, final List<String> urlList, final Object obj) {
         if (onImageCallbackListener != null) {
-            onImageCallbackListener.onPreGet(imageUrl, view);
+            onImageCallbackListener.onPreGet(imageUrl, obj);
         }
 
         if (StringUtils.isEmpty(imageUrl)) {
             if (onImageCallbackListener != null) {
-                onImageCallbackListener.onGetNotInCache(imageUrl, view);
+                onImageCallbackListener.onGetNotInCache(imageUrl, obj);
             }
             return false;
         }
@@ -142,7 +142,7 @@ public class ImageMemoryCache extends PreloadDataCache<String, Bitmap> {
         if (object != null) {
             Bitmap bitmap = object.getData();
             if (bitmap != null) {
-                onGetSuccess(imageUrl, bitmap, view, true);
+                onGetSuccess(imageUrl, bitmap, obj, true);
                 return true;
             } else {
                 remove(imageUrl);
@@ -150,20 +150,20 @@ public class ImageMemoryCache extends PreloadDataCache<String, Bitmap> {
         }
 
         if (isOpenWaitingQueue) {
-            synchronized (viewSetMap) {
-                HashSet<View> viewSet = viewSetMap.get(imageUrl);
-                if (viewSet == null) {
-                    viewSet = new HashSet<View>();
-                    viewSetMap.put(imageUrl, viewSet);
+            synchronized (objSetMap) {
+                HashSet<Object> objSet = objSetMap.get(imageUrl);
+                if (objSet == null) {
+                    objSet = new HashSet<Object>();
+                    objSetMap.put(imageUrl, objSet);
                 }
-                viewSet.add(view);
+                objSet.add(obj);
             }
         } else {
-            viewMap.put(imageUrl, view);
+            objMap.put(imageUrl, obj);
         }
 
         if (onImageCallbackListener != null) {
-            onImageCallbackListener.onGetNotInCache(imageUrl, view);
+            onImageCallbackListener.onGetNotInCache(imageUrl, obj);
         }
         if (isExistGettingDataThread(imageUrl)) {
             return false;
@@ -319,8 +319,8 @@ public class ImageMemoryCache extends PreloadDataCache<String, Bitmap> {
 
         super.setOnGetDataListener(getDefaultOnGetImageListener());
         super.setCacheFullRemoveType(new RemoveTypeUsedCountSmall<Bitmap>());
-        this.viewMap = new ConcurrentHashMap<String, View>();
-        this.viewSetMap = new HashMap<String, HashSet<View>>();
+        this.objMap = new ConcurrentHashMap<String, Object>();
+        this.objSetMap = new HashMap<String, HashSet<Object>>();
         this.handler = new MyHandler();
         if (Looper.myLooper() == null) {
             Looper.prepare();
@@ -340,7 +340,7 @@ public class ImageMemoryCache extends PreloadDataCache<String, Bitmap> {
          * @param imageUrl imageUrl
          * @param view view need the image
          */
-        public void onPreGet(String imageUrl, View view);
+        public void onPreGet(String imageUrl, Object obj);
 
         /**
          * callback function when get image but image not in cache, run on ui thread.<br/>
@@ -351,7 +351,7 @@ public class ImageMemoryCache extends PreloadDataCache<String, Bitmap> {
          * @param imageUrl imageUrl
          * @param view view need the image
          */
-        public void onGetNotInCache(String imageUrl, View view);
+        public void onGetNotInCache(String imageUrl, Object obj);
 
         /**
          * callback function after get image successfully, run on ui thread
@@ -361,7 +361,7 @@ public class ImageMemoryCache extends PreloadDataCache<String, Bitmap> {
          * @param view view need the image
          * @param isInCache whether already in cache or got realtime
          */
-        public void onGetSuccess(String imageUrl, Bitmap loadedImage, View view, boolean isInCache);
+        public void onGetSuccess(String imageUrl, Bitmap loadedImage, Object obj, boolean isInCache);
 
         /**
          * callback function after get image failed, run on ui thread
@@ -371,7 +371,7 @@ public class ImageMemoryCache extends PreloadDataCache<String, Bitmap> {
          * @param view view need the image
          * @param failedReason failed reason for get image
          */
-        public void onGetFailed(String imageUrl, Bitmap loadedImage, View view, FailedReason failedReason);
+        public void onGetFailed(String imageUrl, Bitmap loadedImage, Object obj, FailedReason failedReason);
     }
 
     /**
@@ -410,15 +410,15 @@ public class ImageMemoryCache extends PreloadDataCache<String, Bitmap> {
                     Bitmap bitmap = object.bitmap;
                     if (onImageCallbackListener != null) {
                         if (isOpenWaitingQueue) {
-                            synchronized (viewSetMap) {
-                                HashSet<View> viewSet = viewSetMap.get(imageUrl);
-                                if (viewSet != null) {
-                                    for (View view : viewSet) {
-                                        if (view != null) {
+                            synchronized (objSetMap) {
+                                HashSet<Object> objSet = objSetMap.get(imageUrl);
+                                if (objSet != null) {
+                                    for (Object obj : objSet) {
+                                        if (obj != null) {
                                             if (WHAT_GET_IMAGE_SUCCESS == message.what) {
-                                                onGetSuccess(imageUrl, bitmap, view, false);
+                                                onGetSuccess(imageUrl, bitmap, obj, false);
                                             } else {
-                                                onImageCallbackListener.onGetFailed(imageUrl, bitmap, view,
+                                                onImageCallbackListener.onGetFailed(imageUrl, bitmap, obj,
                                                         object.failedReason);
                                             }
                                         }
@@ -426,38 +426,38 @@ public class ImageMemoryCache extends PreloadDataCache<String, Bitmap> {
                                 }
                             }
                         } else {
-                            View view = viewMap.get(imageUrl);
-                            if (view != null) {
+                            Object obj = objMap.get(imageUrl);
+                            if (obj != null) {
                                 if (WHAT_GET_IMAGE_SUCCESS == message.what) {
-                                    onGetSuccess(imageUrl, bitmap, view, false);
+                                    onGetSuccess(imageUrl, bitmap, obj, false);
                                 } else {
-                                    onImageCallbackListener.onGetFailed(imageUrl, bitmap, view, object.failedReason);
+                                    onImageCallbackListener.onGetFailed(imageUrl, bitmap, obj, object.failedReason);
                                 }
                             }
                         }
                     }
 
                     if (isOpenWaitingQueue) {
-                        synchronized (viewSetMap) {
-                            viewSetMap.remove(imageUrl);
+                        synchronized (objSetMap) {
+                            objSetMap.remove(imageUrl);
                         }
                     } else {
-                        viewMap.remove(imageUrl);
+                        objMap.remove(imageUrl);
                     }
                     break;
             }
         }
     };
 
-    private void onGetSuccess(String imageUrl, Bitmap loadedImage, View view, boolean isInCache) {
+    private void onGetSuccess(String imageUrl, Bitmap loadedImage, Object obj, boolean isInCache) {
         if (onImageCallbackListener == null) {
             return;
         }
 
         try {
-            onImageCallbackListener.onGetSuccess(imageUrl, loadedImage, view, isInCache);
+            onImageCallbackListener.onGetSuccess(imageUrl, loadedImage, obj, isInCache);
         } catch (OutOfMemoryError e) {
-            onImageCallbackListener.onGetFailed(imageUrl, loadedImage, view, new FailedReason(
+            onImageCallbackListener.onGetFailed(imageUrl, loadedImage, obj, new FailedReason(
                     FailedType.ERROR_OUT_OF_MEMORY, e));
         }
     }

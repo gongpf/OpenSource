@@ -17,4 +17,10 @@ public class RSSActivity extends Activity {
         mWindowManager.pushWindow(new HomeWindow(this));
     }
     
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+    }
+    
 }

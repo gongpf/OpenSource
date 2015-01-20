@@ -46,7 +46,7 @@ public class RSSListWindow extends Window
         
         mAdapter = new RssAdapter();
         mListView.setAdapter(mAdapter);
-        mListView.setBackgroundColor(Color.BLACK);
+        mListView.setBackgroundColor(Color.WHITE);
     }
     
     private void initItemClickListener()
@@ -153,7 +153,7 @@ public class RSSListWindow extends Window
 
             String time = null == entry.getUpdatedDate() ? "" : entry.getUpdatedDate().toLocaleString();
             item.setText(entry.getTitle(), time);
-            item.setUrl("http://www.baidu.com/img/bd_logo1.png");
+            item.setUrl(HtmlUtil.getUrl(entry));
             return item;
         }
     }
@@ -179,9 +179,11 @@ public class RSSListWindow extends Window
             textContainer.setOrientation(LinearLayout.VERTICAL);
             
             mTitle = new TextView(context);
+            mTitle.setTextColor(Color.BLACK);
             textContainer.addView(mTitle);
             
             mTime = new TextView(context);
+            mTime.setTextColor(Color.BLACK);
             textContainer.addView(mTime);
             
             mImageView = new UrlImageView(context);
