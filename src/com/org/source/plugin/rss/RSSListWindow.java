@@ -1,5 +1,6 @@
 package com.org.source.plugin.rss;
 
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.text.format.DateUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,16 +24,21 @@ import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.Syn
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndFeed;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.SyndFeedInput;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.XmlReader;
+import com.org.source.base.ContextManager;
 import com.org.source.eventbus.EventBus;
 import com.org.source.plugin.rss.RSSController.EventType;
 import com.org.source.plugin.rss.RSSController.RSSEvent;
 import com.org.source.widget.UrlImageView.UrlImageView;
+import com.org.source.widget.pulltorefresh.library.PullToRefreshBase;
+import com.org.source.widget.pulltorefresh.library.PullToRefreshListView;
+import com.org.source.widget.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.org.source.window.Window;
 
 public class RSSListWindow extends Window
 {
-    private ListView mListView;
+	private PullToRefreshListView mListView;
     private RssAdapter mAdapter;
+    private String mUrl;
     
     public RSSListWindow(Context context)
     {
@@ -42,14 +49,30 @@ public class RSSListWindow extends Window
     
     private void init(Context context)
     {
-        mListView = new ListView(context);
+        mListView = new PullToRefreshListView(context);
         setContentView(mListView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         
         mAdapter = new RssAdapter();
-        mListView.setAdapter(mAdapter);
-        mListView.setBackgroundColor(Color.WHITE);
-        mListView.setDivider(new ColorDrawable(Color.GRAY));
-        mListView.setDividerHeight(1);
+        ListView listView = mListView.getRefreshableView();
+        listView.setAdapter(mAdapter);
+        listView.setBackgroundColor(Color.WHITE);
+        listView.setDivider(new ColorDrawable(Color.GRAY));
+        listView.setDividerHeight(1);
+        
+        mListView.setOnRefreshListener(new OnRefreshListener<ListView>()
+        {
+            @Override
+            public void onRefresh(PullToRefreshBase<ListView> refreshView)
+            {
+                String label = DateUtils.formatDateTime(ContextManager.getAppContext(), System.currentTimeMillis(),
+                        DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+                
+                refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
+                mAdapter.update(null);
+                new RssAsynTask(mAdapter, mListView).execute(mUrl); 
+            }
+        });
+        
     }
     
     private void initItemClickListener()
@@ -70,55 +93,66 @@ public class RSSListWindow extends Window
     
     public RSSListWindow loadUrl(String url)
     {
-        mAdapter.request(url);
+        mUrl = url;
+        new RssAsynTask(mAdapter, mListView).execute(mUrl); 
         return this;
     }
     
-    public class RssAdapter extends BaseAdapter
+    public static class RssAsynTask extends AsyncTask<String, Void, SyndFeed>
     {
-        public class RssAsynTask extends AsyncTask<String, Void, SyndFeed>
+        private final WeakReference<RssAdapter> mAdapterRf;
+        
+        private final WeakReference<PullToRefreshListView> mListViewRf;
+        
+        public RssAsynTask(RssAdapter adapter, PullToRefreshListView listView)
         {
-            @Override
-            protected SyndFeed doInBackground(String... params)
-            {
-                if (params.length <= 0)
-                {
-                    throw new RuntimeException("Invalid params");
-                }
-
-                URLConnection urlConn = null;
-                SyndFeed syndFeed = null;
-                try
-                {
-                    urlConn = new URL(params[0]).openConnection();
-                    urlConn.setConnectTimeout(5000);
-                    SyndFeedInput input = new SyndFeedInput();
-                    syndFeed = input.build(new XmlReader(urlConn));
-                }
-                catch(Exception e)
-                {
-                    e.printStackTrace();
-                }
-                return syndFeed;
-            }
-
-            @Override
-            protected void onPostExecute(SyndFeed result)
-            {
-                if (null != result)
-                {
-                    update(result.getEntries());
-                }
-            }
-        }
-
-        private List<SyndEntry> mSyndEntries;
-
-        public void request(String url)
-        {
-            new RssAsynTask().execute(url); 
+            mAdapterRf = new WeakReference<RSSListWindow.RssAdapter>(adapter);
+            mListViewRf = new WeakReference<PullToRefreshListView>(listView);
         }
         
+        @Override
+        protected SyndFeed doInBackground(String... params)
+        {
+            if (params.length <= 0)
+            {
+                throw new RuntimeException("Invalid params");
+            }
+
+            URLConnection urlConn = null;
+            SyndFeed syndFeed = null;
+            try
+            {
+                urlConn = new URL(params[0]).openConnection();
+                urlConn.setConnectTimeout(5000);
+                SyndFeedInput input = new SyndFeedInput();
+                syndFeed = input.build(new XmlReader(urlConn));
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+            return syndFeed;
+        }
+
+        @Override
+        protected void onPostExecute(SyndFeed result)
+        {
+            if (null != result)
+            {
+                if (null != mAdapterRf.get() && null != mListViewRf.get())
+                {
+                    mAdapterRf.get().update(result.getEntries());
+                    result.getTitle();
+                    mListViewRf.get().onRefreshComplete();
+                }
+            }
+        }
+    }
+
+    public class RssAdapter extends BaseAdapter
+    {
+        private List<SyndEntry> mSyndEntries;
+
         private void update(List<SyndEntry> list)
         {
             mSyndEntries = list;
@@ -161,7 +195,7 @@ public class RSSListWindow extends Window
         }
     }
     
-    public class RSSView extends LinearLayout
+    public static class RSSView extends LinearLayout
     {
         private TextView mTitle;
         private TextView mTime;

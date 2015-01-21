@@ -22,7 +22,7 @@ public class Window extends FrameLayout implements IWindowAnimator
         super.addViewInLayout(mContentLayer, 0, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         
         setBackgroundColor(Color.TRANSPARENT);
-        mContentLayer.setBackgroundColor(Color.TRANSPARENT);
+        mContentLayer.setBackgroundColor(Color.WHITE);
         
         mWindowSwiper = new DefaultWindowSwiper(mContentLayer);
     }
