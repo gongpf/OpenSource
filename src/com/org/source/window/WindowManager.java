@@ -5,7 +5,6 @@ import java.util.Stack;
 import android.app.Activity;
 import android.content.Context;
 import android.view.KeyEvent;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.org.source.event.ISystemEventHandler;
@@ -44,6 +43,7 @@ public class WindowManager implements ISystemEventHandler
     {
         mWindowStack = new Stack<Window>();
         mViewRoot = new ViewRoot(attachActivity);
+        mViewRoot.setFocusableInTouchMode(true);
         attachActivity.setContentView(mViewRoot);
         EventBus.getDefault().register(this);
     }

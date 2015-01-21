@@ -1,13 +1,14 @@
 package com.org.source.main;
 
 import android.content.Context;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.org.source.rss.RSSController;
+import com.org.source.plugin.rss.RSSController;
 import com.org.source.widget.menudrawer.MenuDrawer;
 import com.org.source.widget.menudrawer.Position;
 import com.org.source.window.Window;
@@ -82,6 +83,10 @@ public class HomeWindow extends Window implements OnClickListener
                 break;
         }
     }
-    
 
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event)
+    {
+        return false;
+    }
 }

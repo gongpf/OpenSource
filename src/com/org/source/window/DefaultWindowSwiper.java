@@ -4,10 +4,8 @@ import android.annotation.SuppressLint;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.org.source.eventbus.EventBus;
 import com.org.source.nineoldandroids.animation.Animator;
 import com.org.source.nineoldandroids.animation.ObjectAnimator;
-import com.org.source.window.WindowManager.WindowEvent;
 
 @SuppressLint("NewApi")
 public class DefaultWindowSwiper extends AbstractWindowSwiper
@@ -50,11 +48,11 @@ public class DefaultWindowSwiper extends AbstractWindowSwiper
         return mAnimatorX.isRunning() || mAnimatorY.isRunning();
     }
     
-    private void popupWindow()
+    @Override
+    public void exitWindow()
     {
-        WindowEvent windowEvent = new WindowEvent();
-        windowEvent.mEventType = WindowManager.EventType.POPUPWINDOW;
-        EventBus.getDefault().post(windowEvent);
+        mAnimatorX.setFloatValues(mTargetView.getTranslationX(), (float) mTargetView.getWidth());
+        super.exitWindow();
     }
 
     @Override

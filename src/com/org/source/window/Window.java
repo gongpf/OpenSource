@@ -7,9 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.org.source.eventbus.EventBus;
 import com.org.source.nineoldandroids.animation.Animator;
-import com.org.source.window.WindowManager.WindowEvent;
 
 public class Window extends FrameLayout implements IWindowAnimator
 {
@@ -150,17 +148,13 @@ public class Window extends FrameLayout implements IWindowAnimator
         if (event.getAction() == KeyEvent.ACTION_UP 
                 && event.getKeyCode() == KeyEvent.KEYCODE_BACK)
         {
-            popupWindow();
+            if (null != mWindowSwiper)
+            {
+                mWindowSwiper.exitWindow();
+            }
             return true;
         }
         
         return false;
-    }
-    
-    private void popupWindow()
-    {
-        WindowEvent windowEvent = new WindowEvent();
-        windowEvent.mEventType = WindowManager.EventType.POPUPWINDOW;
-        EventBus.getDefault().post(windowEvent);
     }
 }

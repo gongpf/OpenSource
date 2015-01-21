@@ -178,9 +178,7 @@ public abstract class AbstractUrlBitmap
         }
     }
 
-    public void setImageDrawable(Drawable drawable)
-    {
-    }
+    public abstract void setImageDrawable(Drawable drawable);
 
     public void setImageDrawable(Bitmap bitmap)
     {

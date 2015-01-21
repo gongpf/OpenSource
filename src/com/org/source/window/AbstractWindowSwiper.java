@@ -1,5 +1,8 @@
 package com.org.source.window;
 
+import com.org.source.eventbus.EventBus;
+import com.org.source.window.WindowManager.WindowEvent;
+
 import android.view.MotionEvent;
 
 public abstract class AbstractWindowSwiper implements WindowSwipeCallBack, IWindowAnimator
@@ -79,5 +82,17 @@ public abstract class AbstractWindowSwiper implements WindowSwipeCallBack, IWind
     protected float getDetalX(MotionEvent event)
     {
         return event.getX() - mLastPointX; 
+    }
+    
+    public void popupWindow()
+    {
+        WindowEvent windowEvent = new WindowEvent();
+        windowEvent.mEventType = WindowManager.EventType.POPUPWINDOW;
+        EventBus.getDefault().post(windowEvent); 
+    }
+    
+    public void exitWindow()
+    {
+        popupWindow();
     }
 }
