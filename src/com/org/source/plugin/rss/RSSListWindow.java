@@ -9,7 +9,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +27,14 @@ import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.Syn
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.SyndFeedInput;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.XmlReader;
 import com.org.source.base.ContextManager;
+import com.org.source.common.util.ScreenUtils;
 import com.org.source.eventbus.EventBus;
 import com.org.source.plugin.rss.RSSController.EventType;
 import com.org.source.plugin.rss.RSSController.RSSEvent;
 import com.org.source.widget.UrlImageView.UrlImageView;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshBase;
-import com.org.source.widget.pulltorefresh.library.PullToRefreshListView;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.org.source.widget.pulltorefresh.library.PullToRefreshListView;
 import com.org.source.window.Window;
 
 public class RSSListWindow extends Window
@@ -56,7 +59,7 @@ public class RSSListWindow extends Window
         ListView listView = mListView.getRefreshableView();
         listView.setAdapter(mAdapter);
         listView.setBackgroundColor(Color.WHITE);
-        listView.setDivider(new ColorDrawable(Color.GRAY));
+        listView.setDivider(new ColorDrawable(DefaultColor.default_divider_color));
         listView.setDividerHeight(1);
         
         mListView.setOnRefreshListener(new OnRefreshListener<ListView>()
@@ -188,7 +191,7 @@ public class RSSListWindow extends Window
             RSSView item = (RSSView) convertView;
             SyndEntry entry = mSyndEntries.get(position);
 
-            String time = null == entry.getUpdatedDate() ? "" : entry.getUpdatedDate().toLocaleString();
+            String time = null == entry.getPublishedDate() ? "" : entry.getPublishedDate().toLocaleString();
             item.setText(entry.getTitle(), time);
             item.setUrl(HtmlUtil.getUrl(entry));
             return item;
@@ -211,23 +214,28 @@ public class RSSListWindow extends Window
         {
             setOrientation(LinearLayout.HORIZONTAL);
             setGravity(Gravity.CENTER_VERTICAL);
-            setPadding(25, 25, 25, 25);
+            int padding = ScreenUtils.dpToPxInt(context, 15);
+            setPadding(padding, padding, padding, padding);
             
             LinearLayout textContainer = new LinearLayout(context);
             textContainer.setOrientation(LinearLayout.VERTICAL);
             
             mTitle = new TextView(context);
-            mTitle.setTextColor(Color.BLACK);
+            mTitle.setTextSize(TypedValue.COMPLEX_UNIT_PX, ScreenUtils.dpToPxInt(context, 17));
+            mTitle.setTextColor(DefaultColor.default_text_color);
             textContainer.addView(mTitle);
             
             mTime = new TextView(context);
-            mTime.setTextColor(Color.BLACK);
-            textContainer.addView(mTime);
+            mTime.setTextColor(DefaultColor.default_secondary_text_color);
+            mTime.setTextSize(TypedValue.COMPLEX_UNIT_PX, ScreenUtils.dpToPxInt(context, 12));
+            LayoutParams timeLayoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            timeLayoutParams.topMargin = ScreenUtils.dpToPxInt(context, 10);
+            textContainer.addView(mTime, timeLayoutParams);
             
             mImageView = new UrlImageView(context);
             
             addView(textContainer, new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1));
-            addView(mImageView, 500, 300);
+            addView(mImageView, ScreenUtils.dpToPxInt(context, 100), ScreenUtils.dpToPxInt(context, 60));
         }
         
         public void setText(String title, String time)
@@ -238,7 +246,15 @@ public class RSSListWindow extends Window
         
         public void setUrl(String imageUrl)
         {
-            mImageView.setImageUrl(imageUrl);
+            if (TextUtils.isEmpty(imageUrl))
+            {
+                mImageView.setVisibility(GONE);
+            }
+            else 
+            {
+                mImageView.setVisibility(VISIBLE);
+                mImageView.setImageUrl(imageUrl);
+            }
         }
     }
 }

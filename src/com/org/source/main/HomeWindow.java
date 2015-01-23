@@ -68,7 +68,7 @@ public class HomeWindow extends Window implements OnClickListener
         switch (v.getId())
         {
             case 1:
-                mRssController.openListWindow("http://blog.sina.com.cn/rss/dianyingshijie.xml");
+                mRssController.openListWindow("http://coolshell.cn/feed");
                 break;
 
             case 2:

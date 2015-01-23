@@ -327,12 +327,12 @@ public abstract class MenuDrawer extends ViewGroup {
         setPosition(Position.fromValue(0));
 
         mMenuContainer = new NoClickThroughFrameLayout(context);
-        mMenuContainer.setBackgroundColor(Color.BLACK);
+        mMenuContainer.setBackgroundColor(0xFFDDA0DD);
 
         mContentContainer = new NoClickThroughFrameLayout(context);
-        mContentContainer.setBackgroundColor(Color.WHITE);
+        mContentContainer.setBackgroundColor(0xFFD8BFD8);
 
-        mMenuOverlay = new ColorDrawable(0xFF000000);
+        mMenuOverlay = new ColorDrawable(Color.BLACK);
     }
 
     protected int dpToPx(int dp) {
