@@ -1,8 +1,5 @@
 package com.org.source.plugin.rss;
 
-import java.util.List;
-
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
@@ -12,9 +9,9 @@ import android.util.TypedValue;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndContent;
-import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndEntry;
+import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
+import com.org.source.plugin.rss.model.RSSItem;
 import com.org.source.widget.UrlImageView.TextViewUrlDrawable;
 import com.org.source.window.Window;
 
@@ -22,65 +19,41 @@ public class RSSContentWindow extends Window
 {
     private ScrollView mContentContainer;
     private TextView mContentView;
-    private SyndEntry mSyndEntry;
     
-    public RSSContentWindow(Context context)
+    public RSSContentWindow()
     {
-        super(context);
-        init(context);
+        super(ContextManager.getContext());
+        init();
     }
     
-    private void init(Context context)
+    private void init()
     {
-        mContentContainer = new ScrollView(context);
+        mContentContainer = new ScrollView(ContextManager.getContext());
         mContentContainer.setBackgroundColor(Color.WHITE);
         setContentView(mContentContainer, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         
-        int leftOrRightPadding = ScreenUtils.dpToPxInt(context, 8);
-        int upOrDownPadding = ScreenUtils.dpToPxInt(context, 20);
+        int leftOrRightPadding = ScreenUtils.dpToPxInt(8);
+        int upOrDownPadding = ScreenUtils.dpToPxInt(20);
         mContentContainer.setPadding(leftOrRightPadding, upOrDownPadding, leftOrRightPadding, upOrDownPadding);
 
-        mContentView = new TextView(context);
+        mContentView = new TextView(ContextManager.getContext());
         mContentView.setTextColor(Color.BLACK);
 
-        mContentView.setTextSize(TypedValue.COMPLEX_UNIT_PX, ScreenUtils.dpToPxInt(context, 16));
-        mContentView.setLineSpacing(ScreenUtils.dpToPx(context, 3), 1.0f);
+        mContentView.setTextSize(TypedValue.COMPLEX_UNIT_PX, ScreenUtils.dpToPxInt(16));
+        mContentView.setLineSpacing(ScreenUtils.dpToPx(3), 1.0f);
         
         
         mContentContainer.addView(mContentView);
         
     }
     
-    public void loadData(SyndEntry entry)
+    public void updateData(RSSItem item)
     {
-        if (null == entry || entry == mSyndEntry)
-        {
-            return ;
-        }
-        
-        mContentContainer.scrollTo(0, 0);
-        
-        mSyndEntry = entry;
-
-        SyndContent description = entry.getDescription();
-        String result = ""; 
-
-        List contents = entry.getContents();
-
-        if (null != contents && contents.size() > 0)
-        {
-            for (Object item : contents)
-            {
-                SyndContent content = (SyndContent) item;
-                result += content.getValue();
-            }
-        }
-
-        if (TextUtils.isEmpty(result))
-        {
-            result = null != description ? description.getValue() : "";
-        }
-        
+        loadData(item.text);
+    }
+    
+    public void loadData(String result)
+    {
         if (!TextUtils.isEmpty(result))
         {
             mContentView.setText(Html.fromHtml(result, new RssImageGetter(), null));

@@ -16,7 +16,7 @@
         android:name=".main.Application"
         android:label="@string/app_name" >
         <meta-data android:name="AA_DB_NAME" android:value="opensource.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="1" />
+        <meta-data android:name="AA_DB_VERSION" android:value="3" />
         <activity
             android:name=".main.MainActivity"
             android:label="@string/app_name" >

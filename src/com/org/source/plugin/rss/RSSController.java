@@ -1,17 +1,16 @@
 package com.org.source.plugin.rss;
 
-import android.content.Context;
-
-import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndEntry;
 import com.org.source.event.ISystemEventHandler;
 import com.org.source.eventbus.EventBus;
+import com.org.source.plugin.rss.model.RSSData;
+import com.org.source.plugin.rss.model.RSSItem;
 import com.org.source.window.WindowManager;
 import com.org.source.window.WindowManager.WindowEvent;
 
 
 public class RSSController implements ISystemEventHandler
 {
-    public enum EventType {UNKOWN, OPENCONTENTWINDOW, POPUPWINDOW};
+    public enum EventType {UNKOWN, OPENRSSWINDOW, OPENLISTWINDOW, OPENCONTENTWINDOW, POPUPWINDOW};
     
     public static class RSSEvent
     {
@@ -19,31 +18,20 @@ public class RSSController implements ISystemEventHandler
         public Object mObject;
     }
     
+    private RSSMainWindow mRSSWindow;
     private RSSListWindow mListWindow;
     private RSSContentWindow mContentWindow;
-    private final Context mContext;
     
-    public RSSController(Context context)
+    public RSSController()
     {
-        mContext = context;
         EventBus.getDefault().register(this);
-    }
-    
-    public void openListWindow(String url)
-    {
-        getListWindow().loadUrl(url);
-        
-        WindowEvent windowEvent = new WindowEvent();
-        windowEvent.mEventType = WindowManager.EventType.PUSHWINDOW;
-        windowEvent.mObject = getListWindow();
-        EventBus.getDefault().post(windowEvent);
     }
     
     private RSSListWindow getListWindow()
     {
         if (null == mListWindow)
         {
-            mListWindow = new RSSListWindow(mContext);
+            mListWindow = new RSSListWindow();
         }
         
         return mListWindow;
@@ -53,11 +41,49 @@ public class RSSController implements ISystemEventHandler
     {
         if (null == mContentWindow)
         {
-            mContentWindow = new RSSContentWindow(mContext);
+            mContentWindow = new RSSContentWindow();
         }
         
         return mContentWindow;
     }
+    
+    private RSSMainWindow getRSSWindow()
+    {
+        if (null == mRSSWindow)
+        {
+            mRSSWindow = new RSSMainWindow();
+        }
+        
+        return mRSSWindow;
+    }
+    
+    public void openListWindow(RSSData data)
+    {
+        WindowEvent windowEvent = new WindowEvent();
+        windowEvent.mEventType = WindowManager.EventType.PUSHWINDOW;
+        windowEvent.mObject = getListWindow();
+        getListWindow().update(data);
+        EventBus.getDefault().post(windowEvent);
+    }
+    
+    public void openContentWindow(RSSItem data)
+    {
+        WindowEvent windowEvent = new WindowEvent();
+        windowEvent.mEventType = WindowManager.EventType.PUSHWINDOW;
+        getContentWindow().updateData(data);
+        windowEvent.mObject = getContentWindow();
+        EventBus.getDefault().post(windowEvent);
+    }
+    
+    public void openMainWindow()
+    {
+        WindowEvent windowEvent = new WindowEvent();
+        windowEvent.mEventType = WindowManager.EventType.PUSHWINDOW;
+        getRSSWindow().refresh();
+        windowEvent.mObject = getRSSWindow();
+        EventBus.getDefault().post(windowEvent);
+    }
+    
     
     public void onEventMainThread(RSSEvent event)
     {
@@ -68,21 +94,21 @@ public class RSSController implements ISystemEventHandler
         
         switch(event.mEventType)
         {
+            case OPENLISTWINDOW:
+                openListWindow((RSSData)event.mObject);
+                break;
+                
+            case OPENRSSWINDOW:
+                openMainWindow();
+                break;
+                
             case OPENCONTENTWINDOW:
-                if (null != event.mObject)
-                {
-                    WindowEvent windowEvent = new WindowEvent();
-                    windowEvent.mEventType = WindowManager.EventType.PUSHWINDOW;
-                    getContentWindow().loadData((SyndEntry)event.mObject);
-                    windowEvent.mObject = getContentWindow();
-                    EventBus.getDefault().post(windowEvent);
-                }
+                openContentWindow((RSSItem)event.mObject);
                 break;
 
             default:
                 break;
         }
-        
     }
     
     @Override

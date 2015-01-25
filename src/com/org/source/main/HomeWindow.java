@@ -8,7 +8,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.org.source.plugin.rss.RSSController;
+import com.org.source.eventbus.EventBus;
+import com.org.source.plugin.rss.RSSController.EventType;
+import com.org.source.plugin.rss.RSSController.RSSEvent;
+import com.org.source.plugin.rss.model.RSSData;
 import com.org.source.widget.menudrawer.MenuDrawer;
 import com.org.source.widget.menudrawer.Position;
 import com.org.source.window.Window;
@@ -60,23 +63,23 @@ public class HomeWindow extends Window implements OnClickListener
         setWindowSwiper(null);
     }
 
-    private RSSController mRssController = new RSSController(getContext());
-    
     @Override
     public void onClick(View v) 
     {
         switch (v.getId())
         {
             case 1:
-                mRssController.openListWindow("http://coolshell.cn/feed");
+                RSSEvent event = new RSSEvent();
+                event.mEventType = EventType.OPENRSSWINDOW;
+                EventBus.getDefault().post(event);
                 break;
 
             case 2:
-                mRssController.openListWindow("http://www.appinn.com/feed/");
+                RSSData.save("http://coolshell.cn/feed", "xx", "xx");
+                RSSData.save("http://www.appinn.com/feed/", "xx", "xx");
                 break;
 
             case 3:
-                mRssController.openListWindow("http://www.feedou.com/rss/5aea25e613aa775c0113aa7c30410023.xml");
                 break;
 
             default:

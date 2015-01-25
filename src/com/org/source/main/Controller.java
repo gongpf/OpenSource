@@ -7,11 +7,13 @@ import com.org.source.base.ContextManager;
 import com.org.source.event.ISystemEventHandler;
 import com.org.source.event.ISystemEventHandler.SystemEvent;
 import com.org.source.eventbus.EventBus;
+import com.org.source.plugin.rss.RSSController;
 import com.org.source.window.WindowManager;
 
 public class Controller
 {
     private WindowManager mWindowManager;
+    private RSSController mRssController;
 
     public Controller(Context context)
     {
@@ -27,6 +29,8 @@ public class Controller
     {
         mWindowManager = new WindowManager(activity);
         mWindowManager.pushWindow(new HomeWindow(activity));
+        
+        mRssController = new RSSController();
     }
 
     public void destory()
