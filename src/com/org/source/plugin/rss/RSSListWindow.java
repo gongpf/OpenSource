@@ -5,6 +5,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
 
+import android.R.string;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -26,6 +27,8 @@ import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.Syn
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndFeed;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.SyndFeedInput;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.XmlReader;
+import com.org.source.activeandroid.ActiveAndroid;
+import com.org.source.activeandroid.query.Select;
 import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
 import com.org.source.eventbus.EventBus;
@@ -71,8 +74,7 @@ public class RSSListWindow extends Window
                         DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
                 
                 refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
-                mAdapter.update(null);
-                new RssAsynTask(mAdapter, mListView).execute(mUrl); 
+                new RssAsynTask(mUrl, mAdapter, mListView).execute(); 
             }
         });
         
@@ -97,35 +99,38 @@ public class RSSListWindow extends Window
     public RSSListWindow loadUrl(String url)
     {
         mUrl = url;
-        new RssAsynTask(mAdapter, mListView).execute(mUrl); 
+        new RssAsynTask(mUrl, mAdapter, mListView).execute(); 
         return this;
     }
     
-    public static class RssAsynTask extends AsyncTask<String, Void, SyndFeed>
+    public static class RssAsynTask extends AsyncTask<Void, Void, SyndFeed>
     {
+        private final String mOriginUrl;
+        
         private final WeakReference<RssAdapter> mAdapterRf;
         
         private final WeakReference<PullToRefreshListView> mListViewRf;
         
-        public RssAsynTask(RssAdapter adapter, PullToRefreshListView listView)
+        public RssAsynTask(String originUrl, RssAdapter adapter, PullToRefreshListView listView)
         {
+            mOriginUrl = originUrl;
             mAdapterRf = new WeakReference<RSSListWindow.RssAdapter>(adapter);
             mListViewRf = new WeakReference<PullToRefreshListView>(listView);
         }
         
         @Override
-        protected SyndFeed doInBackground(String... params)
+        protected SyndFeed doInBackground(Void... params)
         {
-            if (params.length <= 0)
+            if (TextUtils.isEmpty(mOriginUrl))
             {
-                throw new RuntimeException("Invalid params");
+                throw new RuntimeException("Invalid origin url");
             }
 
             URLConnection urlConn = null;
             SyndFeed syndFeed = null;
             try
             {
-                urlConn = new URL(params[0]).openConnection();
+                urlConn = new URL(mOriginUrl).openConnection();
                 urlConn.setConnectTimeout(5000);
                 SyndFeedInput input = new SyndFeedInput();
                 syndFeed = input.build(new XmlReader(urlConn));
@@ -142,36 +147,55 @@ public class RSSListWindow extends Window
         {
             if (null != result)
             {
+                saveToDB(result);
+                
                 if (null != mAdapterRf.get() && null != mListViewRf.get())
                 {
-                    mAdapterRf.get().update(result.getEntries());
-                    result.getTitle();
+                    mAdapterRf.get().update(mOriginUrl);
                     mListViewRf.get().onRefreshComplete();
                 }
             }
         }
+        
+        private void saveToDB(SyndFeed result)
+        {
+            if (null != result)
+            {
+                ActiveAndroid.beginTransaction();
+                @SuppressWarnings("unchecked")
+                List<SyndEntry> entryList = result.getEntries();
+                for (SyndEntry entry : entryList)
+                {
+                    RSSItem.save(mOriginUrl, entry.getTitle(), entry.getUpdatedDate().toLocaleString(), 
+                            HtmlUtil.getUrl(entry));
+                }
+                ActiveAndroid.setTransactionSuccessful();
+                ActiveAndroid.endTransaction();
+            }
+        }
     }
 
-    public class RssAdapter extends BaseAdapter
+    public static class RssAdapter extends BaseAdapter
     {
-        private List<SyndEntry> mSyndEntries;
-
-        private void update(List<SyndEntry> list)
+        private List<RSSItem> mItems;
+        
+        public void update(String url)
         {
-            mSyndEntries = list;
+            mItems.clear();
+            mItems = new Select().from(RSSItem.class).and("originurl = ?", url).execute();
             notifyDataSetChanged();
         }
 
         @Override
         public int getCount()
         {
-            return null != mSyndEntries ? mSyndEntries.size() : 0;
+            return null != mItems ? mItems.size() : 0;
         }
 
         @Override
         public Object getItem(int position)
         {
-            return mSyndEntries.get(position);
+            return mItems.get(position);
         }
 
         @Override
@@ -185,15 +209,14 @@ public class RSSListWindow extends Window
         {
             if (null == convertView)
             {
-                convertView = new RSSView(getContext());
+                convertView = new RSSView(ContextManager.getContext());
             }
 
             RSSView item = (RSSView) convertView;
-            SyndEntry entry = mSyndEntries.get(position);
+            RSSItem itemData = mItems.get(position);
 
-            String time = null == entry.getPublishedDate() ? "" : entry.getPublishedDate().toLocaleString();
-            item.setText(entry.getTitle(), time);
-            item.setUrl(HtmlUtil.getUrl(entry));
+            item.setText(itemData.description, itemData.updateTime);
+            item.setUrl(itemData.imageUrl);
             return item;
         }
     }
