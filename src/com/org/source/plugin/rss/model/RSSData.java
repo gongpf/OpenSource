@@ -19,6 +19,9 @@ public class RSSData extends Model
     @Column(name = "time")
     public String time;
     
+    @Column(name = "imageurl")
+    public String imageUrl = "";
+    
     public RSSData()
     {
         super();

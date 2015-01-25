@@ -77,6 +77,10 @@ public class HomeWindow extends Window implements OnClickListener
             case 2:
                 RSSData.save("http://coolshell.cn/feed", "xx", "xx");
                 RSSData.save("http://www.appinn.com/feed/", "xx", "xx");
+                RSSData.save("http://www.36kr.com/feed/", "xx", "xx");
+                RSSData.save("http://cn.engadget.com/rss.xml", "xx", "xx");
+                RSSData.save("http://www.douban.com/feed/review/movie", "xx", "xx");
+                RSSData.save("http://www.douban.com/feed/review/book", "xx", "xx");
                 break;
 
             case 3:

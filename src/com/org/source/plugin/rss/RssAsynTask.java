@@ -76,12 +76,23 @@ public class RssAsynTask extends AsyncTask<Void, Void, Boolean>
     
         ActiveAndroid.beginTransaction();
         @SuppressWarnings("unchecked")
+        String imageUrl = "";
         List<SyndEntry> entryList = result.getEntries();
         for (SyndEntry entry : entryList)
         {
-            RSSItem.save(data, entry.getTitle(), entry.getPublishedDate().toLocaleString(),
-                    HtmlUtil.getUrl(entry), HtmlUtil.getContent(entry));
+            String url = HtmlUtil.getUrl(entry);
+            RSSItem.save(data, entry.getTitle(), null == entry.getPublishedDate() ? null : entry.getPublishedDate().toLocaleString(),
+                    url, HtmlUtil.getContent(entry));
+            
+            if (!TextUtils.isEmpty(url))
+            {
+                imageUrl = url;
+            }
         }
+        
+        data.imageUrl = imageUrl;
+        data.save();
+        
         ActiveAndroid.setTransactionSuccessful();
         ActiveAndroid.endTransaction();
         return true;
