@@ -9,7 +9,7 @@ import android.widget.FrameLayout;
 
 import com.org.source.nineoldandroids.animation.Animator;
 
-public class Window extends FrameLayout implements IWindowAnimator
+public abstract class Window extends FrameLayout implements IWindowAnimator
 {
     private final FrameLayout mContentLayer;
     private AbstractWindowSwiper mWindowSwiper;
@@ -157,4 +157,8 @@ public class Window extends FrameLayout implements IWindowAnimator
         
         return false;
     }
+
+    public abstract void onWindowAttached();
+    
+    public abstract void onWindowDetached();
 }

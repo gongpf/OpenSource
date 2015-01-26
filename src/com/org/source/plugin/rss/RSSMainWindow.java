@@ -69,9 +69,15 @@ public class RSSMainWindow extends Window
         });
     }
     
-    public void refresh()
+    @Override
+    public void onWindowAttached()
     {
         mAdapter.refresh();
+    }
+
+    @Override
+    public void onWindowDetached()
+    {
     }
 
     public static class RssAdapter extends BaseAdapter

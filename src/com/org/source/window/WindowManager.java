@@ -48,8 +48,10 @@ public class WindowManager implements ISystemEventHandler
         EventBus.getDefault().register(this);
     }
     
-    public void pushWindow(Window window)
+    public void pushWindow(Window win)
     {
+        final Window window = win;
+
         if (window.isAnimation())
         {
             return ;
@@ -59,10 +61,23 @@ public class WindowManager implements ISystemEventHandler
         mWindowStack.add(window);
         
         Animator animator = window.getPushAnimator();
-        if (null != animator)
+        
+        if (null == animator)
         {
-            animator.start();
+            window.onWindowAttached();
+            return ;
         }
+
+        animator.addListener(new AbstractAnimatorListener()
+        {
+            @Override
+            public void onAnimationEnd(Animator animation)
+            {
+                window.onWindowAttached();
+                animation.removeListener(this);
+            }
+        });
+        animator.start();
     }
     
     public void popWindow()
@@ -79,6 +94,7 @@ public class WindowManager implements ISystemEventHandler
         if (null == animator)
         {
             mViewRoot.removeView(window);
+            window.onWindowDetached();
             return;
         }
         
@@ -88,6 +104,7 @@ public class WindowManager implements ISystemEventHandler
             public void onAnimationEnd(Animator animation)
             {
                 mViewRoot.removeView(window);
+                window.onWindowDetached();
                 animation.removeListener(this);
             }
         });

@@ -96,4 +96,18 @@ public class HomeWindow extends Window implements OnClickListener
     {
         return false;
     }
+
+    @Override
+    public void onWindowAttached()
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void onWindowDetached()
+    {
+        // TODO Auto-generated method stub
+        
+    }
 }

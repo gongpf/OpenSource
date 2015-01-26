@@ -34,7 +34,7 @@ import com.org.source.window.Window;
 
 public class RSSListWindow extends Window
 {
-	private PullToRefreshListView mListView;
+    private PullToRefreshListView mListView;
     private RssAdapter mAdapter;
     private RSSData mData;
     
@@ -109,8 +109,18 @@ public class RSSListWindow extends Window
     
     public RSSListWindow update()
     {
-        mAdapter.update(mData.items());
+        mAdapter.update(null == mData ? null : mData.items());
         return this;
+    }
+
+    @Override
+    public void onWindowAttached()
+    {
+    }
+
+    @Override
+    public void onWindowDetached()
+    {
     }
     
     public static class RssAdapter extends BaseAdapter

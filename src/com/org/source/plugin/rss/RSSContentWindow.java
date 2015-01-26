@@ -19,6 +19,7 @@ public class RSSContentWindow extends Window
 {
     private ScrollView mContentContainer;
     private TextView mContentView;
+    private RSSItem mItem;
     
     public RSSContentWindow()
     {
@@ -47,17 +48,32 @@ public class RSSContentWindow extends Window
         
     }
     
-    public void updateData(RSSItem item)
+    public void setData(RSSItem item)
     {
-        loadData(item.text);
+        mItem = item;
+    }
+
+    public void updateData()
+    {
+        loadData(null == mItem ? "" : mItem.text);
     }
     
-    public void loadData(String result)
+    private void loadData(String result)
     {
-        if (!TextUtils.isEmpty(result))
-        {
-            mContentView.setText(Html.fromHtml(result, new RssImageGetter(), null));
-        }
+        mContentView.setText(TextUtils.isEmpty(result) ? "" : Html.fromHtml(result, new RssImageGetter(), null));
+    }
+
+    @Override
+    public void onWindowAttached()
+    {
+        updateData();
+    }
+
+    @Override
+    public void onWindowDetached()
+    {
+        setData(null);
+        updateData();
     }
     
     public class RssImageGetter implements ImageGetter

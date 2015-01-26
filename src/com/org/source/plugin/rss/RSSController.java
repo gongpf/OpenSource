@@ -57,6 +57,14 @@ public class RSSController implements ISystemEventHandler
         return mRSSWindow;
     }
     
+    public void openMainWindow()
+    {
+        WindowEvent windowEvent = new WindowEvent();
+        windowEvent.mEventType = WindowManager.EventType.PUSHWINDOW;
+        windowEvent.mObject = getRSSWindow();
+        EventBus.getDefault().post(windowEvent);
+    }
+
     public void openListWindow(RSSData data)
     {
         WindowEvent windowEvent = new WindowEvent();
@@ -70,20 +78,10 @@ public class RSSController implements ISystemEventHandler
     {
         WindowEvent windowEvent = new WindowEvent();
         windowEvent.mEventType = WindowManager.EventType.PUSHWINDOW;
-        getContentWindow().updateData(data);
+        getContentWindow().setData(data);
         windowEvent.mObject = getContentWindow();
         EventBus.getDefault().post(windowEvent);
     }
-    
-    public void openMainWindow()
-    {
-        WindowEvent windowEvent = new WindowEvent();
-        windowEvent.mEventType = WindowManager.EventType.PUSHWINDOW;
-        getRSSWindow().refresh();
-        windowEvent.mObject = getRSSWindow();
-        EventBus.getDefault().post(windowEvent);
-    }
-    
     
     public void onEventMainThread(RSSEvent event)
     {
