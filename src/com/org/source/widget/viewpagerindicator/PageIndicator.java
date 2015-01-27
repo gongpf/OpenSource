@@ -17,7 +17,7 @@
 
 package com.org.source.widget.viewpagerindicator;
 
-import android.support.v4.view.ViewPager;
+import com.org.source.widget.ViewPager.ViewPager;
 
 /**
  * A PageIndicator is responsible to show an visual indicator on the total views

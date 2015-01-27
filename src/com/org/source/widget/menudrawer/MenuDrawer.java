@@ -267,7 +267,7 @@ public abstract class MenuDrawer extends ViewGroup {
     /**
      * Callback that lets the listener override intercepting of touch events.
      */
-    protected OnInterceptMoveEventListener mOnInterceptMoveEventListener;
+    protected OnInterceptMoveEventListener mOnInterceptMoveEventListener; 
 
     protected SlideDrawable mSlideDrawable;
 
