@@ -1,5 +1,6 @@
 package com.org.source.window;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.view.View;
 
@@ -11,6 +12,8 @@ public class DefaultWindowSwiper extends AbstractWindowSwiper
 {
     private ObjectAnimator mAnimatorX;
     private ObjectAnimator mAnimatorY;
+    
+    private Animator mLastPopupAnimator;
 
     public DefaultWindowSwiper(View target)
     {
@@ -35,14 +38,25 @@ public class DefaultWindowSwiper extends AbstractWindowSwiper
                 break;
         }
 
+        mLastPopupAnimator = animator;
         return animator;
     }
     
     @Override
     public Animator getPushAnimator()
     {
-        mAnimatorX.setFloatValues(1000, 0);
-        return mAnimatorX;
+        ObjectAnimator animator = mAnimatorX;
+        if (mLastPopupAnimator == mAnimatorY)
+        {
+            animator = mAnimatorY;
+        }
+        else 
+        {
+            animator = mAnimatorX;
+        }
+        
+        animator.setFloatValues((Float)animator.getAnimatedValue(), 0);
+        return animator;
     }
     
     @Override
