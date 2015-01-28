@@ -45,7 +45,6 @@ public class RSSContentWindow extends Window
         
         
         mContentContainer.addView(mContentView);
-        
     }
     
     public void setData(RSSItem item)

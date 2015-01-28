@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.org.source.nineoldandroids.animation.Animator;
+import com.org.source.window.AbstractWindowSwiper.OnInterceptMoveEventListener;
 
 public abstract class Window extends FrameLayout implements IWindowAnimator
 {
@@ -36,6 +37,16 @@ public abstract class Window extends FrameLayout implements IWindowAnimator
     public void setWindowSwiper(AbstractWindowSwiper swiper)
     {
         mWindowSwiper = swiper;
+    }
+    
+    public void setInterceptMoveEventListener(OnInterceptMoveEventListener l)
+    {
+        if (null == mWindowSwiper)
+        {
+            throw new RuntimeException("Need to set windowSwiper first");
+        }
+        
+        mWindowSwiper.setInterceptMoveEventListener(l);
     }
     
     @Override

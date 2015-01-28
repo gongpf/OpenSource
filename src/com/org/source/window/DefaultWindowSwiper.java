@@ -1,7 +1,6 @@
 package com.org.source.window;
 
 import android.annotation.SuppressLint;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.org.source.nineoldandroids.animation.Animator;
@@ -12,27 +11,31 @@ public class DefaultWindowSwiper extends AbstractWindowSwiper
 {
     private ObjectAnimator mAnimatorX;
     private ObjectAnimator mAnimatorY;
-    private final View mTargetView;
 
-    private boolean mCanDrag = false;
-    
     public DefaultWindowSwiper(View target)
     {
-        mTargetView = target;
+        super(target);
         mAnimatorX = ObjectAnimator.ofFloat(mTargetView, "TranslationX", 0);
         mAnimatorY = ObjectAnimator.ofFloat(mTargetView, "TranslationY", 0);
     }
     
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent event)
-    {
-        return mCanDrag;
-    }
-    
-    @Override
     public Animator getPopupAnimator()
     {
-        return mAnimatorX;
+        Animator animator = mAnimatorX;
+
+        switch (mDirection)
+        {
+            case UP:
+            case DOWN:
+                animator = mAnimatorY;
+                break;
+
+            default:
+                break;
+        }
+
+        return animator;
     }
     
     @Override
@@ -58,7 +61,6 @@ public class DefaultWindowSwiper extends AbstractWindowSwiper
     @Override
     public void onInit()
     {
-        mCanDrag = (mDownPointX < 200 || mDownPointX > (mTargetView.getWidth() - 200));
     };
 
     @Override
