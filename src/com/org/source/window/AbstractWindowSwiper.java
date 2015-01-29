@@ -13,7 +13,9 @@ public abstract class AbstractWindowSwiper implements WindowSwipeCallBack, IWind
 {
     public interface OnInterceptMoveEventListener 
     {
-        boolean isViewDraggable(View v, int delta, int x, int y);
+        boolean isViewDraggableVertically(View v, int dy, int x, int y);
+
+        boolean isViewDraggableHorizontally(View v, int dx, int x, int y);
     }
 
     protected enum Direction {NONE, LEFT, RIGHT, DOWN, UP};
@@ -188,7 +190,7 @@ public abstract class AbstractWindowSwiper implements WindowSwipeCallBack, IWind
             }
         }
 
-        return checkV && mOnInterceptMoveEventListener.isViewDraggable(v, dx, x, y);
+        return checkV && mOnInterceptMoveEventListener.isViewDraggableHorizontally(v, dx, x, y);
     }
 
     protected boolean canChildScrollVertically(View v, boolean checkV, int dx, int x, int y)
@@ -216,7 +218,7 @@ public abstract class AbstractWindowSwiper implements WindowSwipeCallBack, IWind
             }
         }
 
-        return checkV && mOnInterceptMoveEventListener.isViewDraggable(v, dx, x, y);
+        return checkV && mOnInterceptMoveEventListener.isViewDraggableVertically(v, dx, x, y);
     }
 
     private int supportGetTranslationY(View v)

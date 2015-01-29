@@ -1,6 +1,5 @@
 package com.org.source.window;
 
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.view.View;
 
@@ -18,8 +17,8 @@ public class DefaultWindowSwiper extends AbstractWindowSwiper
     public DefaultWindowSwiper(View target)
     {
         super(target);
-        mAnimatorX = ObjectAnimator.ofFloat(mTargetView, "TranslationX", 0);
-        mAnimatorY = ObjectAnimator.ofFloat(mTargetView, "TranslationY", 0);
+        mAnimatorX = ObjectAnimator.ofFloat(mTargetView, "TranslationX", 1000, 0);
+        mAnimatorY = ObjectAnimator.ofFloat(mTargetView, "TranslationY", 1000, 0);
     }
     
     @Override
@@ -55,7 +54,8 @@ public class DefaultWindowSwiper extends AbstractWindowSwiper
             animator = mAnimatorX;
         }
         
-        animator.setFloatValues((Float)animator.getAnimatedValue(), 0);
+        float fromValue = (Float)animator.getAnimatedValue();
+        animator.setFloatValues(0 == fromValue ? 1000 : fromValue, 0);
         return animator;
     }
     
@@ -69,6 +69,7 @@ public class DefaultWindowSwiper extends AbstractWindowSwiper
     public void exitWindow()
     {
         mAnimatorX.setFloatValues(mTargetView.getTranslationX(), (float) mTargetView.getWidth());
+        mAnimatorY.setFloatValues(mTargetView.getTranslationY(), (float) mTargetView.getHeight());
         super.exitWindow();
     }
 

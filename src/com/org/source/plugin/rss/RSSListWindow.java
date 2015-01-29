@@ -30,6 +30,7 @@ import com.org.source.widget.UrlImageView.UrlImageView;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshBase;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshListView;
+import com.org.source.window.AbstractWindowSwiper.OnInterceptMoveEventListener;
 import com.org.source.window.Window;
 
 public class RSSListWindow extends Window
@@ -57,19 +58,37 @@ public class RSSListWindow extends Window
         listView.setDivider(new ColorDrawable(DefaultColor.default_divider_color));
         listView.setDividerHeight(1);
         
-        mListView.setOnRefreshListener(new OnRefreshListener<ListView>()
-        {
-            @Override
-            public void onRefresh(PullToRefreshBase<ListView> refreshView)
-            {
-                String label = DateUtils.formatDateTime(ContextManager.getAppContext(), System.currentTimeMillis(),
-                        DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
-                
-                refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
-                new RssAsynTask(mData.url, mCallback).execute(); 
-            }
-        });
+        mListView.setOnRefreshListener(mOnRefreshListener);
+        setInterceptMoveEventListener(mInterceptMoveEventListener);
     }
+
+    private OnRefreshListener<ListView> mOnRefreshListener = new OnRefreshListener<ListView>()
+    {
+        @Override
+        public void onRefresh(PullToRefreshBase<ListView> refreshView)
+        {
+            String label = DateUtils.formatDateTime(ContextManager.getAppContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
+                    | DateUtils.FORMAT_ABBREV_ALL);
+
+            refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
+            new RssAsynTask(mData.url, mCallback).execute();
+        }
+    };
+
+    private OnInterceptMoveEventListener mInterceptMoveEventListener = new OnInterceptMoveEventListener()
+    {
+        @Override
+        public boolean isViewDraggableHorizontally(View v, int dx, int x, int y)
+        {
+            return false;
+        }
+
+        @Override
+        public boolean isViewDraggableVertically(View v, int dy, int x, int y)
+        {
+            return true;
+        }
+    };
     
     private RssCallback mCallback = new RssCallback()
     {

@@ -25,6 +25,7 @@ import com.org.source.plugin.rss.RSSController.RSSEvent;
 import com.org.source.plugin.rss.model.RSSData;
 import com.org.source.widget.UrlImageView.UrlImageView;
 import com.org.source.window.Window;
+import com.org.source.window.AbstractWindowSwiper.OnInterceptMoveEventListener;
 
 public class RSSMainWindow extends Window
 {
@@ -51,7 +52,24 @@ public class RSSMainWindow extends Window
         mListView.setNumColumns(2);
         mListView.setHorizontalSpacing(ScreenUtils.dpToPxInt(10));
         mListView.setVerticalSpacing(ScreenUtils.dpToPxInt(10));
+        
+        setInterceptMoveEventListener(mInterceptMoveEventListener);
     }
+
+    private OnInterceptMoveEventListener mInterceptMoveEventListener = new OnInterceptMoveEventListener()
+    {
+        @Override
+        public boolean isViewDraggableHorizontally(View v, int dx, int x, int y)
+        {
+            return false;
+        }
+
+        @Override
+        public boolean isViewDraggableVertically(View v, int dy, int x, int y)
+        {
+            return true;
+        }
+    };
     
     private void initItemClickListener()
     {

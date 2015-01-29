@@ -6,6 +6,7 @@ import android.text.Html;
 import android.text.Html.ImageGetter;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -13,6 +14,7 @@ import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
 import com.org.source.plugin.rss.model.RSSItem;
 import com.org.source.widget.UrlImageView.TextViewUrlDrawable;
+import com.org.source.window.AbstractWindowSwiper.OnInterceptMoveEventListener;
 import com.org.source.window.Window;
 
 public class RSSContentWindow extends Window
@@ -45,7 +47,35 @@ public class RSSContentWindow extends Window
         
         
         mContentContainer.addView(mContentView);
+        setInterceptMoveEventListener(mInterceptMoveEventListener);
     }
+    
+    private OnInterceptMoveEventListener mInterceptMoveEventListener = new OnInterceptMoveEventListener()
+    {
+        @Override
+        public boolean isViewDraggableHorizontally(View v, int dx, int x, int y)
+        {
+            return false;
+        }
+
+        @Override
+        public boolean isViewDraggableVertically(View v, int dy, int x, int y)
+        {
+            boolean ret = false;
+
+            if (v == mContentContainer)
+            {
+                View chidView = mContentContainer.getChildAt(0);
+                int scrollY = mContentContainer.getScrollY();
+
+                ret = dy < 0 && scrollY < (chidView.getHeight() - mContentContainer.getHeight());
+                ret |= dy > 0 && scrollY > 0;
+                return ret;
+            }
+
+            return ret;
+        }
+    };
     
     public void setData(RSSItem item)
     {
