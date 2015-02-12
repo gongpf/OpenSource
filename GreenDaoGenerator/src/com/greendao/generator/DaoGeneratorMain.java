@@ -17,12 +17,12 @@ public class DaoGeneratorMain {
   
     public static void main(String[] args) throws Exception {  
           
-        Schema schema = new Schema(3, "de.greenrobot.daoexample");  
+        Schema schema = new Schema(3, "com.org.source.greendao.dao");  
   
         addNote(schema);  
         addCustomerOrder(schema);  
   
-        new DaoGenerator().generateAll(schema, "../DaoExample/src-gen");  
+        new DaoGenerator().generateAll(schema, "../src");  
     }  
   
     private static void addNote(Schema schema) {  
