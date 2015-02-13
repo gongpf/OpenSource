@@ -23,10 +23,10 @@ import android.database.sqlite.SQLiteDatabase;
 
 import java.util.Map;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.AbstractDaoSession;
-import de.greenrobot.dao.identityscope.IdentityScopeType;
-import de.greenrobot.dao.internal.DaoConfig;
+import ${schema.defaultLibPackage}.AbstractDao;
+import ${schema.defaultLibPackage}.AbstractDaoSession;
+import ${schema.defaultLibPackage}.identityscope.IdentityScopeType;
+import ${schema.defaultLibPackage}.internal.DaoConfig;
 
 <#list schema.entities as entity>
 import ${entity.javaPackage}.${entity.className};

@@ -31,15 +31,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.Property;
+import ${schema.defaultLibPackage}.AbstractDao;
+import ${schema.defaultLibPackage}.Property;
 <#if entity.toOneRelations?has_content>
-import de.greenrobot.dao.internal.SqlUtils;
+import ${schema.defaultLibPackage}.internal.SqlUtils;
 </#if>
-import de.greenrobot.dao.internal.DaoConfig;
+import ${schema.defaultLibPackage}.internal.DaoConfig;
 <#if entity.incomingToManyRelations?has_content>
-import de.greenrobot.dao.query.Query;
-import de.greenrobot.dao.query.QueryBuilder;
+import ${schema.defaultLibPackage}.query.Query;
+import ${schema.defaultLibPackage}.query.QueryBuilder;
 </#if>
 
 <#if entity.javaPackageDao != schema.defaultJavaPackageDao>

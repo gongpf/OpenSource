@@ -27,7 +27,7 @@ import java.util.List;
 </#if>
 <#if entity.active>
 import ${schema.defaultJavaPackageDao}.DaoSession;
-import de.greenrobot.dao.DaoException;
+import ${schema.defaultLibPackage}.DaoException;
 
 </#if>
 <#if entity.additionalImportsEntity?has_content>

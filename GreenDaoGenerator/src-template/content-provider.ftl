@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
-import de.greenrobot.dao.DaoLog;
+import ${schema.defaultLibPackage}.DaoLog;
 
 import ${schema.defaultJavaPackageDao}.DaoSession;
 import ${entity.javaPackageDao}.${entity.classNameDao};

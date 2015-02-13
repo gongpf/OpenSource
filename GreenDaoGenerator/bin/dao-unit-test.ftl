@@ -21,9 +21,9 @@ package ${entity.javaPackageTest};
 
 <#assign isStringPK = entity.pkProperty?? && entity.pkProperty.propertyType == "String" />
 <#if isStringPK>
-import de.greenrobot.dao.test.AbstractDaoTestStringPk;
+import ${schema.defaultLibPackage}.test.AbstractDaoTestStringPk;
 <#else>
-import de.greenrobot.dao.test.AbstractDaoTestLongPk;
+import ${schema.defaultLibPackage}.test.AbstractDaoTestLongPk;
 </#if>
 
 import ${entity.javaPackage}.${entity.className};

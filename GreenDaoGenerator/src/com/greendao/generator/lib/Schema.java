@@ -30,6 +30,7 @@ import java.util.Map;
 public class Schema {
     private final int version;
     private final String defaultJavaPackage;
+    private final String defaultLibPackage;
     private String defaultJavaPackageDao;
     private String defaultJavaPackageTest;
     private final List<Entity> entities;
@@ -39,9 +40,10 @@ public class Schema {
     private boolean hasKeepSectionsByDefault;
     private boolean useActiveEntitiesByDefault;
 
-    public Schema(int version, String defaultJavaPackage) {
+    public Schema(int version, String defaultJavaPackage, String libPackage) {
         this.version = version;
         this.defaultJavaPackage = defaultJavaPackage;
+        this.defaultLibPackage = libPackage;
         this.entities = new ArrayList<Entity>();
         initTypeMappings();
     }
@@ -138,6 +140,10 @@ public class Schema {
 
     public String getDefaultJavaPackage() {
         return defaultJavaPackage;
+    }
+
+    public String getDefaultLibPackage() {
+        return defaultLibPackage;
     }
 
     public String getDefaultJavaPackageDao() {

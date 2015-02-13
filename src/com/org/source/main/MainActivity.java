@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Window;
 
+import com.org.source.test.TestJson;
+
 
 public class MainActivity extends Activity {
 
@@ -17,7 +19,9 @@ public class MainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         
         mController = new Controller(this);
-        mController.start(this);
+//        mController.start(this);
+        
+        new TestJson().test();
     }
     
     @Override
