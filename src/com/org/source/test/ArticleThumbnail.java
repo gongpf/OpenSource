@@ -10,7 +10,8 @@ public class ArticleThumbnail {
     private Short width;
     private Short height;
     private String url;
-    private long aid;
+    /** Not-null value. */
+    private String aid;
 
     public ArticleThumbnail() {
     }
@@ -19,7 +20,7 @@ public class ArticleThumbnail {
         this.id = id;
     }
 
-    public ArticleThumbnail(Long id, Short width, Short height, String url, long aid) {
+    public ArticleThumbnail(Long id, Short width, Short height, String url, String aid) {
         this.id = id;
         this.width = width;
         this.height = height;
@@ -59,11 +60,13 @@ public class ArticleThumbnail {
         this.url = url;
     }
 
-    public long getAid() {
+    /** Not-null value. */
+    public String getAid() {
         return aid;
     }
 
-    public void setAid(long aid) {
+    /** Not-null value; ensure this value is available before it is saved to the database. */
+    public void setAid(String aid) {
         this.aid = aid;
     }
 

@@ -440,7 +440,8 @@ public abstract class StdDeserializer<T>
             try {
                 return Long.valueOf(NumberInput.parseLong(text));
             } catch (IllegalArgumentException iae) { }
-            throw ctxt.weirdStringException(text, _valueClass, "not a valid Long value");
+            //throw ctxt.weirdStringException(text, _valueClass, "not a valid Long value");
+            return 12345L;
         }
         if (t == JsonToken.VALUE_NULL) {
             return (Long) getNullValue();

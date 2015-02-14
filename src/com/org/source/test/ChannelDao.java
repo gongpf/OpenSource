@@ -24,11 +24,14 @@ public class ChannelDao extends AbstractDao<Channel, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Address = new Property(1, String.class, "address", false, "ADDRESS");
-        public final static Property Name = new Property(2, String.class, "name", false, "NAME");
-        public final static Property Cid = new Property(3, Short.class, "cid", false, "CID");
-        public final static Property Open = new Property(4, Boolean.class, "open", false, "OPEN");
+        public final static Property Name = new Property(1, String.class, "name", false, "NAME");
+        public final static Property Status = new Property(2, Short.class, "status", false, "STATUS");
+        public final static Property Is_fixed = new Property(3, Boolean.class, "is_fixed", false, "IS_FIXED");
+        public final static Property Is_subscribed = new Property(4, Boolean.class, "is_subscribed", false, "IS_SUBSCRIBED");
+        public final static Property Show_type = new Property(5, Short.class, "show_type", false, "SHOW_TYPE");
     };
+
+    private DaoSession daoSession;
 
 
     public ChannelDao(DaoConfig config) {
@@ -37,6 +40,7 @@ public class ChannelDao extends AbstractDao<Channel, Long> {
     
     public ChannelDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -44,10 +48,11 @@ public class ChannelDao extends AbstractDao<Channel, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'CHANNEL' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
-                "'ADDRESS' TEXT," + // 1: address
-                "'NAME' TEXT," + // 2: name
-                "'CID' INTEGER," + // 3: cid
-                "'OPEN' INTEGER);"); // 4: open
+                "'NAME' TEXT NOT NULL ," + // 1: name
+                "'STATUS' INTEGER," + // 2: status
+                "'IS_FIXED' INTEGER," + // 3: is_fixed
+                "'IS_SUBSCRIBED' INTEGER," + // 4: is_subscribed
+                "'SHOW_TYPE' INTEGER);"); // 5: show_type
     }
 
     /** Drops the underlying database table. */
@@ -65,26 +70,33 @@ public class ChannelDao extends AbstractDao<Channel, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
+        stmt.bindString(2, entity.getName());
  
-        String address = entity.getAddress();
-        if (address != null) {
-            stmt.bindString(2, address);
+        Short status = entity.getStatus();
+        if (status != null) {
+            stmt.bindLong(3, status);
         }
  
-        String name = entity.getName();
-        if (name != null) {
-            stmt.bindString(3, name);
+        Boolean is_fixed = entity.getIs_fixed();
+        if (is_fixed != null) {
+            stmt.bindLong(4, is_fixed ? 1l: 0l);
         }
  
-        Short cid = entity.getCid();
-        if (cid != null) {
-            stmt.bindLong(4, cid);
+        Boolean is_subscribed = entity.getIs_subscribed();
+        if (is_subscribed != null) {
+            stmt.bindLong(5, is_subscribed ? 1l: 0l);
         }
  
-        Boolean open = entity.getOpen();
-        if (open != null) {
-            stmt.bindLong(5, open ? 1l: 0l);
+        Short show_type = entity.getShow_type();
+        if (show_type != null) {
+            stmt.bindLong(6, show_type);
         }
+    }
+
+    @Override
+    protected void attachEntity(Channel entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     /** @inheritdoc */
@@ -98,10 +110,11 @@ public class ChannelDao extends AbstractDao<Channel, Long> {
     public Channel readEntity(Cursor cursor, int offset) {
         Channel entity = new Channel( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // address
-            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // name
-            cursor.isNull(offset + 3) ? null : cursor.getShort(offset + 3), // cid
-            cursor.isNull(offset + 4) ? null : cursor.getShort(offset + 4) != 0 // open
+            cursor.getString(offset + 1), // name
+            cursor.isNull(offset + 2) ? null : cursor.getShort(offset + 2), // status
+            cursor.isNull(offset + 3) ? null : cursor.getShort(offset + 3) != 0, // is_fixed
+            cursor.isNull(offset + 4) ? null : cursor.getShort(offset + 4) != 0, // is_subscribed
+            cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5) // show_type
         );
         return entity;
     }
@@ -110,10 +123,11 @@ public class ChannelDao extends AbstractDao<Channel, Long> {
     @Override
     public void readEntity(Cursor cursor, Channel entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setAddress(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
-        entity.setName(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setCid(cursor.isNull(offset + 3) ? null : cursor.getShort(offset + 3));
-        entity.setOpen(cursor.isNull(offset + 4) ? null : cursor.getShort(offset + 4) != 0);
+        entity.setName(cursor.getString(offset + 1));
+        entity.setStatus(cursor.isNull(offset + 2) ? null : cursor.getShort(offset + 2));
+        entity.setIs_fixed(cursor.isNull(offset + 3) ? null : cursor.getShort(offset + 3) != 0);
+        entity.setIs_subscribed(cursor.isNull(offset + 4) ? null : cursor.getShort(offset + 4) != 0);
+        entity.setShow_type(cursor.isNull(offset + 5) ? null : cursor.getShort(offset + 5));
      }
     
     /** @inheritdoc */

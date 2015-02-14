@@ -21,30 +21,15 @@ public class DaoGeneratorMain {
 
     public static void main(String[] args) throws Exception {  
           
-        Schema schema = new Schema(3, "com.org.source.greendao.dao", "com.org.source.greendao");  
+        Schema schema = new Schema(3, "com.org.source.test", "com.org.source.greendao");  
   
         addChannel(schema);
-        addArticle(schema);
-        addArticleImage(schema);
-        addArticleThumbnail(schema);
-
+        
         new DaoGenerator().generateAll(schema, "../src");  
-
-        Schema schema1 = new Schema(3, "com.org.source.test", "com.org.source.greendao");  
-        addTestBean(schema1);
-        new DaoGenerator().generateAll(schema1, "../src");  
     }  
 
-    private static void addTestBean(Schema schema) {  
-        Entity channel = schema.addEntity("Channel");  
-        channel.addIdProperty();  
-        channel.addStringProperty("address");  
-        channel.addStringProperty("name");  
-        channel.addShortProperty("cid");  
-        channel.addBooleanProperty("open");  
-    }
-  
     private static void addChannel(Schema schema) {  
+        //1.1 channel
         channel = schema.addEntity("Channel");  
         channel.addIdProperty();  
         channel.addStringProperty("name").notNull();  
@@ -52,11 +37,10 @@ public class DaoGeneratorMain {
         channel.addBooleanProperty("is_fixed");
         channel.addBooleanProperty("is_subscribed");
         channel.addShortProperty("show_type");
-    }  
-
-    private static void addArticle(Schema schema) {  
+        
+        //1.2 article
         article = schema.addEntity("Article");  
-        article.addIdProperty().getProperty();
+        Property articleIdProperty = article.addStringProperty("id").notNull().primaryKey().getProperty();
         article.addStringProperty("attribute");  
         article.addShortProperty("comment_cnt");
         article.addStringProperty("content").getProperty();
@@ -66,10 +50,12 @@ public class DaoGeneratorMain {
         Property articleCidProperty = article.addLongProperty("cid").notNull().getProperty();
         channel.addToMany(article, articleCidProperty).setName("articles");
 
-        // add images
-
         article.addShortProperty("item_type");
-        article.addStringProperty("matched_tag");
+        
+        //
+        //article.addStringProperty("matched_tag");
+        //
+        
         article.addShortProperty("oppose_cnt");
         article.addStringProperty("original_url");
         article.addStringProperty("publish_time");
@@ -79,19 +65,22 @@ public class DaoGeneratorMain {
         article.addStringProperty("source_name");
         
         // add special
+        //article.addStringProperty("special_content");
+        //
 
         article.addStringProperty("summary");
         article.addShortProperty("support_cnt");
-        article.addStringProperty("tags");
         
+//        article.addStringProperty("tags");
+        
+        // add images
         // add thumbanils
 
         article.addStringProperty("title");
         article.addStringProperty("url");
         article.addBooleanProperty("valid");
-    }  
-
-    private static void addArticleImage(Schema schema) {  
+        
+        //1.3 articleImage
         articleImage = schema.addEntity("ArticleImage");  
         articleImage.addIdProperty().autoincrement();  
         articleImage.addStringProperty("title");  
@@ -104,18 +93,17 @@ public class DaoGeneratorMain {
         articleImage.addStringProperty("gallery_id");  
         articleImage.addShortProperty("gallery_type");
 
-        Property articleIdProperty = articleImage.addLongProperty("aid").notNull().getProperty();
-        article.addToMany(articleImage, articleIdProperty, "image");
-    }  
-
-    private static void addArticleThumbnail(Schema schema) {  
+        Property articleIdPropertyInImage = articleImage.addStringProperty("aid").notNull().getProperty();
+        article.addToMany(articleIdProperty, articleImage, articleIdPropertyInImage).setName("image");
+        
+        //1.4 articleeThumbnaill
         articleThumbnail = schema.addEntity("ArticleThumbnail");  
         articleThumbnail.addIdProperty().autoincrement();  
         articleThumbnail.addShortProperty("width");
         articleThumbnail.addShortProperty("height");
         articleThumbnail.addStringProperty("url");  
 
-        Property articleIdProperty = articleThumbnail.addLongProperty("aid").notNull().getProperty();
-        article.addToMany(articleThumbnail, articleIdProperty, "thumbnails");
+        Property articleIdPropertyInThumbnail = articleThumbnail.addStringProperty("aid").notNull().getProperty();
+        article.addToMany(articleIdProperty, articleThumbnail, articleIdPropertyInThumbnail).setName("thumbnails");
     }  
 }  

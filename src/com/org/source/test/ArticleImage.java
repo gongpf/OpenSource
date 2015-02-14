@@ -16,7 +16,8 @@ public class ArticleImage {
     private String url;
     private String gallery_id;
     private Short gallery_type;
-    private long aid;
+    /** Not-null value. */
+    private String aid;
 
     public ArticleImage() {
     }
@@ -25,7 +26,7 @@ public class ArticleImage {
         this.id = id;
     }
 
-    public ArticleImage(Long id, String title, Short index, String description, Short width, Short height, String type, String url, String gallery_id, Short gallery_type, long aid) {
+    public ArticleImage(Long id, String title, Short index, String description, Short width, Short height, String type, String url, String gallery_id, Short gallery_type, String aid) {
         this.id = id;
         this.title = title;
         this.index = index;
@@ -119,11 +120,13 @@ public class ArticleImage {
         this.gallery_type = gallery_type;
     }
 
-    public long getAid() {
+    /** Not-null value. */
+    public String getAid() {
         return aid;
     }
 
-    public void setAid(long aid) {
+    /** Not-null value; ensure this value is available before it is saved to the database. */
+    public void setAid(String aid) {
         this.aid = aid;
     }
 
