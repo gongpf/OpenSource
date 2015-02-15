@@ -10,11 +10,11 @@ import com.org.source.window.WindowManager.WindowEvent;
 
 public class RSSController implements ISystemEventHandler
 {
-    public enum EventType {UNKOWN, OPENRSSWINDOW, OPENLISTWINDOW, OPENCONTENTWINDOW, POPUPWINDOW};
+    public enum RSSEventType {UNKOWN, OPENRSSWINDOW, OPENLISTWINDOW, OPENCONTENTWINDOW, POPUPWINDOW};
     
     public static class RSSEvent
     {
-        public EventType mEventType = EventType.UNKOWN;
+        public RSSEventType mEventType = RSSEventType.UNKOWN;
         public Object mObject;
     }
     

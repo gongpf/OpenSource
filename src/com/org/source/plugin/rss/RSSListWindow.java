@@ -22,7 +22,7 @@ import android.widget.TextView;
 import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
 import com.org.source.eventbus.EventBus;
-import com.org.source.plugin.rss.RSSController.EventType;
+import com.org.source.plugin.rss.RSSController.RSSEventType;
 import com.org.source.plugin.rss.RSSController.RSSEvent;
 import com.org.source.plugin.rss.model.RSSData;
 import com.org.source.plugin.rss.model.RSSItem;
@@ -113,7 +113,7 @@ public class RSSListWindow extends Window
             {
                 RSSItem item = (RSSItem)arg0.getAdapter().getItem(arg2);
                 RSSEvent event = new RSSEvent();
-                event.mEventType = EventType.OPENCONTENTWINDOW;
+                event.mEventType = RSSEventType.OPENCONTENTWINDOW;
                 event.mObject = item;
                 EventBus.getDefault().post(event);
             }

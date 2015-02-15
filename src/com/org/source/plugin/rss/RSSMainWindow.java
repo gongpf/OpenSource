@@ -20,7 +20,7 @@ import com.org.source.activeandroid.query.Select;
 import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
 import com.org.source.eventbus.EventBus;
-import com.org.source.plugin.rss.RSSController.EventType;
+import com.org.source.plugin.rss.RSSController.RSSEventType;
 import com.org.source.plugin.rss.RSSController.RSSEvent;
 import com.org.source.plugin.rss.model.RSSData;
 import com.org.source.widget.UrlImageView.UrlImageView;
@@ -80,7 +80,7 @@ public class RSSMainWindow extends Window
             {
                 RSSData data = (RSSData)arg0.getAdapter().getItem(arg2);
                 RSSEvent event = new RSSEvent();
-                event.mEventType = EventType.OPENLISTWINDOW;
+                event.mEventType = RSSEventType.OPENLISTWINDOW;
                 event.mObject = data;
                 EventBus.getDefault().post(event);
             }

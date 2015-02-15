@@ -12,9 +12,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.org.source.eventbus.EventBus;
-import com.org.source.plugin.rss.RSSController.EventType;
 import com.org.source.plugin.rss.RSSController.RSSEvent;
+import com.org.source.plugin.rss.RSSController.RSSEventType;
 import com.org.source.plugin.rss.model.RSSData;
+import com.org.source.sm.SMController.SMEvent;
+import com.org.source.sm.SMController.SMEventType;
 import com.org.source.widget.ViewPager.PagerAdapter;
 import com.org.source.widget.ViewPager.ViewPager;
 import com.org.source.widget.menudrawer.MenuDrawer;
@@ -135,7 +137,7 @@ public class HomeWindow extends Window implements OnClickListener
         {
             case 1:
                 RSSEvent event = new RSSEvent();
-                event.mEventType = EventType.OPENRSSWINDOW;
+                event.mEventType = RSSEventType.OPENRSSWINDOW;
                 EventBus.getDefault().post(event);
                 break;
 
@@ -151,6 +153,9 @@ public class HomeWindow extends Window implements OnClickListener
                 break;
 
             case 3:
+                SMEvent event1 = new SMEvent();
+                event1.mEventType = SMEventType.OPENMAINWINDOW;
+                EventBus.getDefault().post(event1);
                 break;
 
             default:
