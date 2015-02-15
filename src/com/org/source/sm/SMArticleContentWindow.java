@@ -47,7 +47,6 @@ public class SMArticleContentWindow extends Window
         mContentView.setTextSize(TypedValue.COMPLEX_UNIT_PX, ScreenUtils.dpToPxInt(16));
         mContentView.setLineSpacing(ScreenUtils.dpToPx(3), 1.0f);
         
-        
         mContentContainer.addView(mContentView);
         setInterceptMoveEventListener(mInterceptMoveEventListener);
     }

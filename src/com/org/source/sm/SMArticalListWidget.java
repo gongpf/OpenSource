@@ -14,26 +14,23 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
-import com.org.source.activeandroid.DatabaseHelper;
 import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
 import com.org.source.eventbus.EventBus;
-import com.org.source.plugin.rss.RSSController.RSSEvent;
-import com.org.source.plugin.rss.RSSController.RSSEventType;
-import com.org.source.plugin.rss.model.RSSItem;
 import com.org.source.sm.SMController.SMEvent;
 import com.org.source.sm.SMController.SMEventType;
 import com.org.source.sm.SMRequestAsynTask.SMRequestCallBack;
 import com.org.source.sm.model.Article;
 import com.org.source.sm.model.ArticleList;
 import com.org.source.sm.model.ArticleThumbnail;
+import com.org.source.sm.model.Channel;
 import com.org.source.widget.UrlImageView.UrlImageView;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshBase;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
@@ -43,6 +40,7 @@ public class SMArticalListWidget extends FrameLayout
 {
     private PullToRefreshListView mListView;
     private SMAdapter mAdapter;
+    private Channel mChannel;
     
     public SMArticalListWidget()
     {
@@ -96,18 +94,19 @@ public class SMArticalListWidget extends FrameLayout
         });
     }
     
-    @Override
-    protected void onAttachedToWindow() {
+    public void setChannel(Channel channel) {
+        mChannel = channel;
         requestChannel();
-    };
+    }
     
     private void requestChannel() {
-        String baseUrl = "http://zzd.sm.cn/appservice/api/v1/channel/100?client_os=android&client_version=1.8.0.1&bid=800&m_ch=006&city=020&sn=409863a83890f78ede8da3c44f20d27a&ftime=1423794052009&recoid=16155304276489967791&count=2&method=new&content_cnt=2";
-        new SMRequestAsynTask<ChannelJsonResonse>(ChannelJsonResonse.class,
-                mCallback).execute(baseUrl);
+        if (null != mChannel && null != mChannel.getId()) {
+            String baseUrl = "http://zzd.sm.cn/appservice/api/v1/channel/@?client_os=android&client_version=1.8.0.1&bid=800&m_ch=006&city=020&sn=409863a83890f78ede8da3c44f20d27a&ftime=1423794052009&recoid=16155304276489967791&count=2&method=new&content_cnt=2";
+            new SMRequestAsynTask<ChannelJsonResonse>(ChannelJsonResonse.class,
+                    mCallback).execute(baseUrl.replaceFirst("@", mChannel.getId().toString()));
+        }
     }
 
-    
     private SMRequestCallBack<ChannelJsonResonse> mCallback = new SMRequestCallBack<ChannelJsonResonse>()
     {
         @Override
@@ -126,7 +125,9 @@ public class SMArticalListWidget extends FrameLayout
         
         public void update(List<Article> items)
         {
-            mItems.clear();
+            if (null != mItems) {
+                mItems.clear();
+            }
             mItems = items;
             notifyDataSetChanged();
         }
@@ -229,5 +230,9 @@ public class SMArticalListWidget extends FrameLayout
                 mImageView.setImageUrl(imageUrl);
             }
         }
+    }
+
+    public CharSequence getTitle() {
+        return null == mChannel ? "" : mChannel.getName();
     }
 }

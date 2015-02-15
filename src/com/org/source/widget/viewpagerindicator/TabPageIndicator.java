@@ -19,12 +19,17 @@ package com.org.source.widget.viewpagerindicator;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
+import com.org.source.common.util.ScreenUtils;
 import com.org.source.widget.ViewPager.PagerAdapter;
 import com.org.source.widget.ViewPager.ViewPager;
 import com.org.source.widget.ViewPager.ViewPager.OnPageChangeListener;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
@@ -156,6 +161,8 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
         tabView.setFocusable(true);
         tabView.setOnClickListener(mTabClickListener);
         tabView.setText(text);
+        tabView.setPadding(ScreenUtils.dpToPxInt(12), 0, ScreenUtils.dpToPxInt(12), 0);
+        tabView.setTextSize(TypedValue.COMPLEX_UNIT_PX, ScreenUtils.dpToPxInt(17));
 
         if (iconResId != 0) {
             tabView.setCompoundDrawablesWithIntrinsicBounds(iconResId, 0, 0, 0);
@@ -245,9 +252,10 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
 
         final int tabCount = mTabLayout.getChildCount();
         for (int i = 0; i < tabCount; i++) {
-            final View child = mTabLayout.getChildAt(i);
+            final TabView child = (TabView)mTabLayout.getChildAt(i);
             final boolean isSelected = (i == item);
             child.setSelected(isSelected);
+            child.setTextColor(isSelected ? Color.RED : Color.GRAY);
             if (isSelected) {
                 animateToTab(item);
             }
@@ -279,6 +287,13 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
 
         public int getIndex() {
             return mIndex;
+        }
+        
+        @Override
+        protected void onFocusChanged(boolean focused, int direction,
+                Rect previouslyFocusedRect) {
+            // TODO Auto-generated method stub
+            super.onFocusChanged(focused, direction, previouslyFocusedRect);
         }
     }
 }

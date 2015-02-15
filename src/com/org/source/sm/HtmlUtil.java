@@ -10,6 +10,7 @@ import android.text.TextUtils;
 
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndContent;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndEntry;
+import com.org.source.sm.model.Article;
 
 public class HtmlUtil 
 {
@@ -68,7 +69,12 @@ public class HtmlUtil
         
         return result;
     }
+    
+    public static Article convertArticleContent(Article article) {
         
+        return article;
+    }
+
     public static class RssImageGetter implements ImageGetter
     {
         public List<String> mList = new ArrayList<String>();
@@ -91,4 +97,5 @@ public class HtmlUtil
             return mList;
         }
     }
+    
 }
