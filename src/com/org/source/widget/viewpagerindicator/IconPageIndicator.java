@@ -114,14 +114,14 @@ public class IconPageIndicator extends HorizontalScrollView implements PageIndic
             return;
         }
         if (mViewPager != null) {
-            mViewPager.setOnPageChangeListener(null);
+            mViewPager.registerOnPageChangeListener(null);
         }
         PagerAdapter adapter = view.getAdapter();
         if (adapter == null) {
             throw new IllegalStateException("ViewPager does not have adapter instance.");
         }
         mViewPager = view;
-        view.setOnPageChangeListener(this);
+        view.registerOnPageChangeListener(this);
         notifyDataSetChanged();
     }
 

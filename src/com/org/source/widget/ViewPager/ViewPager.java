@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -200,7 +201,7 @@ public class ViewPager extends ViewGroup {
     private boolean mCalledSuper;
     private int mDecorChildCount;
 
-    private OnPageChangeListener mOnPageChangeListener;
+    private List<OnPageChangeListener> mOnPageChangeListeners = new ArrayList<OnPageChangeListener>();
     private OnPageChangeListener mInternalPageChangeListener;
     private OnAdapterChangeListener mAdapterChangeListener;
     private PageTransformer mPageTransformer;
@@ -377,8 +378,9 @@ public class ViewPager extends ViewGroup {
             // PageTransformers can do complex things that benefit from hardware layers.
             enableLayers(newState != SCROLL_STATE_IDLE);
         }
-        if (mOnPageChangeListener != null) {
-            mOnPageChangeListener.onPageScrollStateChanged(newState);
+        if (mOnPageChangeListeners.size() > 0) {
+            for (OnPageChangeListener listener : mOnPageChangeListeners)
+            listener.onPageScrollStateChanged(newState);
         }
     }
 
@@ -522,8 +524,10 @@ public class ViewPager extends ViewGroup {
             // We don't have any idea how big we are yet and shouldn't have any pages either.
             // Just set things up and let the pending layout handle things.
             mCurItem = item;
-            if (dispatchSelected && mOnPageChangeListener != null) {
-                mOnPageChangeListener.onPageSelected(item);
+            if (dispatchSelected && mOnPageChangeListeners.size() > 0) {
+                for (OnPageChangeListener listener : mOnPageChangeListeners) {
+                    listener.onPageSelected(item);
+                }
             }
             if (dispatchSelected && mInternalPageChangeListener != null) {
                 mInternalPageChangeListener.onPageSelected(item);
@@ -546,15 +550,19 @@ public class ViewPager extends ViewGroup {
         }
         if (smoothScroll) {
             smoothScrollTo(destX, 0, velocity);
-            if (dispatchSelected && mOnPageChangeListener != null) {
-                mOnPageChangeListener.onPageSelected(item);
+            if (dispatchSelected && mOnPageChangeListeners.size() > 0) {
+                for (OnPageChangeListener listener : mOnPageChangeListeners) {
+                    listener.onPageSelected(item);
+                }
             }
             if (dispatchSelected && mInternalPageChangeListener != null) {
                 mInternalPageChangeListener.onPageSelected(item);
             }
         } else {
-            if (dispatchSelected && mOnPageChangeListener != null) {
-                mOnPageChangeListener.onPageSelected(item);
+            if (dispatchSelected && mOnPageChangeListeners.size() > 0) {
+                for (OnPageChangeListener listener : mOnPageChangeListeners) {
+                    listener.onPageSelected(item);
+                }
             }
             if (dispatchSelected && mInternalPageChangeListener != null) {
                 mInternalPageChangeListener.onPageSelected(item);
@@ -571,8 +579,16 @@ public class ViewPager extends ViewGroup {
      *
      * @param listener Listener to set
      */
-    public void setOnPageChangeListener(OnPageChangeListener listener) {
-        mOnPageChangeListener = listener;
+    public void registerOnPageChangeListener(OnPageChangeListener listener) {
+        if (!mOnPageChangeListeners.contains(listener)) {
+            mOnPageChangeListeners.add(listener);
+        }
+    }
+    
+    public void removeOnPageChangeListener(OnPageChangeListener listener) {
+        if (mOnPageChangeListeners.contains(listener)) {
+            mOnPageChangeListeners.remove(listener);
+        }
     }
 
     /**
@@ -1608,8 +1624,10 @@ public class ViewPager extends ViewGroup {
             }
         }
 
-        if (mOnPageChangeListener != null) {
-            mOnPageChangeListener.onPageScrolled(position, offset, offsetPixels);
+        if (mOnPageChangeListeners.size() > 0) {
+            for (OnPageChangeListener listener : mOnPageChangeListeners) {
+                listener.onPageScrolled(position, offset, offsetPixels);
+            }
         }
         if (mInternalPageChangeListener != null) {
             mInternalPageChangeListener.onPageScrolled(position, offset, offsetPixels);

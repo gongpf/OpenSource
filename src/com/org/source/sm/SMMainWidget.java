@@ -15,18 +15,16 @@ import com.org.source.sm.model.Channel;
 import com.org.source.sm.model.ChannelList;
 import com.org.source.widget.ViewPager.PagerAdapter;
 import com.org.source.widget.ViewPager.ViewPager;
+import com.org.source.widget.ViewPager.ViewPager.OnPageChangeListener;
 import com.org.source.widget.viewpagerindicator.TabPageIndicator;
-import com.org.source.window.AbstractWindowSwiper.OnInterceptMoveEventListener;
-import com.org.source.window.Window;
 
-public class SMMainWindow extends Window
+public class SMMainWidget extends LinearLayout
 {
-    private LinearLayout mContainer;
     private TabPageIndicator mIndicator;
     private SMPageAdapter mPagerAdapter;
     private ViewPager mViewPager;
     
-    public SMMainWindow()
+    public SMMainWidget()
     {
         super(ContextManager.getContext());
         init();
@@ -34,11 +32,8 @@ public class SMMainWindow extends Window
     
     private void init()
     {
-        mContainer = new LinearLayout(ContextManager.getContext());
-        mContainer.setOrientation(LinearLayout.VERTICAL);
-        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        setContentView(mContainer, params);
-
+        setOrientation(LinearLayout.VERTICAL);
+        
         mViewPager = new ViewPager(ContextManager.getContext());
         mPagerAdapter = new SMPageAdapter(); 
         mViewPager.setAdapter(mPagerAdapter);
@@ -46,16 +41,14 @@ public class SMMainWindow extends Window
         mIndicator = new TabPageIndicator(ContextManager.getContext());
         mIndicator.setViewPager(mViewPager);
         LayoutParams indicatorLayoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        mContainer.addView(mIndicator, indicatorLayoutParams);
+        addView(mIndicator, indicatorLayoutParams);
         int padding = ScreenUtils.dpToPxInt(10); 
         mIndicator.setPadding(padding, padding, padding, padding);
-
-        mContainer.addView(mViewPager);
         
-        setInterceptMoveEventListener(mInterceptMoveEventListener);
+        addView(mViewPager);
     }
 
-    private void requestAllChannel() {
+    public void requestAllChannel() {
         String baseUrl = "http://zzd.sm.cn/appservice/api/v1/channels/?client_os=android&client_version=1.8.0.1&bid=800&m_ch=006&city=020&sn=409863a83890f78ede8da3c44f20d27a&ftime=1423794052009&recoid=16155304276489967791&count=2&method=new&content_cnt=2";
         new SMRequestAsynTask<AllChannelJsonResonse>(AllChannelJsonResonse.class,
                 mCallback).execute(baseUrl);
@@ -88,7 +81,7 @@ public class SMMainWindow extends Window
             
             List<Channel> removeList = new ArrayList<Channel>();
             for (Channel channel : channels) {
-                if (1 == channel.getStatus()){
+                if (1 == channel.getStatus() || !channel.getIs_subscribed()){
                     removeList.add(channel);
                 }
             }
@@ -109,7 +102,6 @@ public class SMMainWindow extends Window
                mItems.remove(0); 
             }
 
-
             for (int i = 0; i < nChannelCount; i++) {
                 SMArticalListWidget widget = mItems.get(i);
                 Channel channel = channels.get(i);
@@ -129,7 +121,6 @@ public class SMMainWindow extends Window
             container.removeView(mItems.get(position)); 
         }  
   
-  
         @Override  
         public Object instantiateItem(ViewGroup container, int position) {    
              container.addView(mItems.get(position), 0); 
@@ -141,30 +132,8 @@ public class SMMainWindow extends Window
             return arg0==arg1; 
         }  
     }
-    
-    private OnInterceptMoveEventListener mInterceptMoveEventListener = new OnInterceptMoveEventListener()
-    {
-        @Override
-        public boolean isViewDraggableHorizontally(View v, int dx, int x, int y)
-        {
-            return true;
-        }
 
-        @Override
-        public boolean isViewDraggableVertically(View v, int dy, int x, int y)
-        {
-            return true;
-        }
-    };
-    
-    @Override
-    public void onWindowAttached()
-    {
-        requestAllChannel();
-    }
-
-    @Override
-    public void onWindowDetached()
-    {
+    public void registerOnPageChangeListener(OnPageChangeListener listener) {
+        mViewPager.registerOnPageChangeListener(listener);
     }
 }

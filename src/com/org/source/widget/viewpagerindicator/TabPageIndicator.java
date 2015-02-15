@@ -199,14 +199,14 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
             return;
         }
         if (mViewPager != null) {
-            mViewPager.setOnPageChangeListener(null);
+            mViewPager.registerOnPageChangeListener(null);
         }
         final PagerAdapter adapter = view.getAdapter();
         if (adapter == null) {
             throw new IllegalStateException("ViewPager does not have adapter instance.");
         }
         mViewPager = view;
-        view.setOnPageChangeListener(this);
+        view.registerOnPageChangeListener(this);
         notifyDataSetChanged();
     }
 
@@ -287,13 +287,6 @@ public class TabPageIndicator extends HorizontalScrollView implements PageIndica
 
         public int getIndex() {
             return mIndex;
-        }
-        
-        @Override
-        protected void onFocusChanged(boolean focused, int direction,
-                Rect previouslyFocusedRect) {
-            // TODO Auto-generated method stub
-            super.onFocusChanged(focused, direction, previouslyFocusedRect);
         }
     }
 }

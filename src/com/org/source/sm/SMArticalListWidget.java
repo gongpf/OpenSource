@@ -87,8 +87,8 @@ public class SMArticalListWidget extends FrameLayout
             {
                 Article item = (Article)arg0.getAdapter().getItem(arg2);
                 SMEvent event = new SMEvent();
-                event.mEventType = SMEventType.OPENCONTENTWINDOW;
-                event.mObject = item;
+                event.mEventType = SMEventType.OPENWEBVIEWWINDOW;
+                event.mObject = item.getUrl();
                 EventBus.getDefault().post(event);
             }
         });
@@ -212,7 +212,7 @@ public class SMArticalListWidget extends FrameLayout
         {
             try {
                 Long localTime = Long.valueOf(time);
-                mTime.setText(new Date(localTime).toString());
+                mTime.setText(new Date(localTime).toLocaleString());
             } catch (Exception e) {
             }
             mTitle.setText(title);
