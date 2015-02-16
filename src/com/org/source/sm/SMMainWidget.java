@@ -7,12 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.org.source.R;
 import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
 import com.org.source.sm.SMRequestAsynTask.SMRequestCallBack;
 import com.org.source.sm.model.AllChannelJsonResonse;
 import com.org.source.sm.model.Channel;
 import com.org.source.sm.model.ChannelList;
+import com.org.source.widget.ToolBar;
 import com.org.source.widget.ViewPager.PagerAdapter;
 import com.org.source.widget.ViewPager.ViewPager;
 import com.org.source.widget.ViewPager.ViewPager.OnPageChangeListener;
@@ -20,6 +22,7 @@ import com.org.source.widget.viewpagerindicator.TabPageIndicator;
 
 public class SMMainWidget extends LinearLayout
 {
+    private ToolBar mTabBar;
     private TabPageIndicator mIndicator;
     private SMPageAdapter mPagerAdapter;
     private ViewPager mViewPager;
@@ -33,6 +36,12 @@ public class SMMainWidget extends LinearLayout
     private void init()
     {
         setOrientation(LinearLayout.VERTICAL);
+        
+        mTabBar = new ToolBar();
+        LayoutParams toolLayoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        addView(mTabBar, toolLayoutParams);
+        mTabBar.setTitle("神马新闻");
+        mTabBar.setLeftImage(getResources().getDrawable(R.drawable.titlebar_icon_profile_normal));
         
         mViewPager = new ViewPager(ContextManager.getContext());
         mPagerAdapter = new SMPageAdapter(); 
@@ -75,7 +84,7 @@ public class SMMainWidget extends LinearLayout
         public void update(List<Channel> channels) {
             if (null == channels || channels.size() < 0) {
                 mItems.clear();
-                notifyDataSetChanged();
+                notifyUi();
                 return ;
             }
             
@@ -108,8 +117,13 @@ public class SMMainWidget extends LinearLayout
                 widget.setChannel(channel);
             }
             
+            notifyUi();
+        }
+        
+        private void notifyUi() {
             notifyDataSetChanged();
             mIndicator.notifyDataSetChanged();
+            invalidate();
         }
         @Override
         public int getCount() {
