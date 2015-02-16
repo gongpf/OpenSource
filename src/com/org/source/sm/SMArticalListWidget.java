@@ -86,10 +86,18 @@ public class SMArticalListWidget extends FrameLayout
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3)
             {
                 Article item = (Article)arg0.getAdapter().getItem(arg2);
-                SMEvent event = new SMEvent();
-                event.mEventType = SMEventType.OPENWEBVIEWWINDOW;
-                event.mObject = item.getUrl();
-                EventBus.getDefault().post(event);
+                int type = item.getContent_type(); 
+                if (1== type) {
+                    SMEvent event = new SMEvent();
+                    event.mEventType = SMEventType.OPENURLIMAGEWINDOW;
+                    event.mObject = item.getImage();
+                    EventBus.getDefault().post(event);
+                } else {
+                    SMEvent event = new SMEvent();
+                    event.mEventType = SMEventType.OPENWEBVIEWWINDOW;
+                    event.mObject = item.getUrl();
+                    EventBus.getDefault().post(event);
+                }
             }
         });
     }
