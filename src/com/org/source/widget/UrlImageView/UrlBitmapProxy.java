@@ -89,9 +89,9 @@ public class UrlBitmapProxy {
 
     public UrlBitmapProxy(String imageUrl, UrlBitmapCallback callback) {
         mCallbackRf = new WeakReference<UrlBitmapCallback>(callback); 
-        setDrawableState(State.INIT, new ColorDrawable(Color.YELLOW));
-        setDrawableState(State.LOADING, new ColorDrawable(Color.BLUE));
-        setDrawableState(State.ERROR, new ColorDrawable(Color.GREEN));
+        setDrawableState(State.INIT, new ColorDrawable(Color.GRAY));
+        setDrawableState(State.LOADING, new ColorDrawable(Color.GRAY));
+        setDrawableState(State.ERROR, new ColorDrawable(Color.YELLOW));
         setImageUrl(imageUrl);
     }
 

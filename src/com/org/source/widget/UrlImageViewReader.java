@@ -10,7 +10,6 @@ import android.widget.FrameLayout;
 
 import com.org.source.base.ContextManager;
 import com.org.source.sm.model.ArticleImage;
-import com.org.source.widget.UrlImageView.UrlImageView;
 import com.org.source.widget.ViewPager.PagerAdapter;
 import com.org.source.widget.ViewPager.ViewPager;
 import com.org.source.widget.ViewPager.ViewPager.OnPageChangeListener;
