@@ -1,4 +1,4 @@
-package com.org.source.widget.UrlImageView;
+package com.org.source.widget.NetImageView;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -15,18 +15,18 @@ import com.org.source.common.entity.FailedReason;
 import com.org.source.common.service.impl.ImageCache;
 import com.org.source.common.service.impl.ImageMemoryCache.OnImageCallbackListener;
 
-public class UrlBitmapProxy {
+public class NetBitmapProxy {
     private static final ImageCache IMAGE_CACHE = new ImageCache(12, 20);
     static {
         OnImageCallbackListener imageCallBack = new OnImageCallbackListener() {
             // callback function before get image, run on ui thread
             @Override
             public void onPreGet(String imageUrl, Object obj) {
-                if (null == obj || !(obj instanceof UrlBitmapProxy)) {
+                if (null == obj || !(obj instanceof NetBitmapProxy)) {
                     throw new RuntimeException("the view must be UrlBitmap");
                 }
 
-                UrlBitmapProxy bitmapObject = (UrlBitmapProxy) obj;
+                NetBitmapProxy bitmapObject = (NetBitmapProxy) obj;
 
                 if (imageUrl.equals(bitmapObject.getImageUrl())) {
                     bitmapObject.onStartLoading();
@@ -37,12 +37,12 @@ public class UrlBitmapProxy {
             @Override
             public void onGetSuccess(String imageUrl, Bitmap loadedImage,
                     Object obj, boolean isInCache) {
-                if (null == obj || !(obj instanceof UrlBitmapProxy)
+                if (null == obj || !(obj instanceof NetBitmapProxy)
                         || null == loadedImage) {
                     throw new RuntimeException("the view must be UrlBitmap");
                 }
 
-                UrlBitmapProxy bitmapObject = (UrlBitmapProxy) obj;
+                NetBitmapProxy bitmapObject = (NetBitmapProxy) obj;
 
                 if (imageUrl.equals(bitmapObject.getImageUrl())) {
                     bitmapObject.onLoadSuccess(loadedImage);
@@ -53,11 +53,11 @@ public class UrlBitmapProxy {
             @Override
             public void onGetFailed(String imageUrl, Bitmap loadedImage,
                     Object obj, FailedReason failedReason) {
-                if (null == obj || !(obj instanceof UrlBitmapProxy)) {
+                if (null == obj || !(obj instanceof NetBitmapProxy)) {
                     throw new RuntimeException("the view must be UrlBitmap");
                 }
 
-                UrlBitmapProxy bitmapObject = (UrlBitmapProxy) obj;
+                NetBitmapProxy bitmapObject = (NetBitmapProxy) obj;
 
                 if (imageUrl.equals(bitmapObject.getImageUrl())) {
                     bitmapObject.onLoadError();
@@ -87,7 +87,7 @@ public class UrlBitmapProxy {
     
     private final WeakReference<UrlBitmapCallback> mCallbackRf;
 
-    public UrlBitmapProxy(String imageUrl, UrlBitmapCallback callback) {
+    public NetBitmapProxy(String imageUrl, UrlBitmapCallback callback) {
         mCallbackRf = new WeakReference<UrlBitmapCallback>(callback); 
         setDrawableState(State.INIT, new ColorDrawable(Color.GRAY));
         setDrawableState(State.LOADING, new ColorDrawable(Color.GRAY));

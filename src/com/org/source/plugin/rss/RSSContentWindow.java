@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
 import com.org.source.plugin.rss.model.RSSItem;
-import com.org.source.widget.UrlImageView.TextViewUrlDrawable;
+import com.org.source.widget.NetImageView.TextViewUrlDrawable;
 import com.org.source.window.AbstractWindowSwiper.OnInterceptMoveEventListener;
 import com.org.source.window.Window;
 

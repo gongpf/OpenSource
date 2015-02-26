@@ -1,22 +1,22 @@
-package com.org.source.widget.UrlImageView;
+package com.org.source.widget.NetImageView;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
-import com.org.source.widget.UrlImageView.UrlBitmapProxy.UrlBitmapCallback;
+import com.org.source.widget.NetImageView.NetBitmapProxy.UrlBitmapCallback;
 
-public class UrlImageView extends ImageView implements UrlBitmapCallback {
-    private final UrlBitmapProxy mUrlBitmap;
+public class NetImageView extends ImageView implements UrlBitmapCallback {
+    private final NetBitmapProxy mUrlBitmap;
 
-    public UrlImageView(Context context) {
+    public NetImageView(Context context) {
         this(context, null);
     }
 
-    public UrlImageView(Context context, String imageUrl) {
+    public NetImageView(Context context, String imageUrl) {
         super(context);
-        mUrlBitmap = new UrlBitmapProxy(imageUrl, this);
+        mUrlBitmap = new NetBitmapProxy(imageUrl, this);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class UrlImageView extends ImageView implements UrlBitmapCallback {
         mUrlBitmap.setImageUrl(imageUrl);
     }
 
-    public void setDrawableState(UrlBitmapProxy.State state, Drawable drawable) {
+    public void setDrawableState(NetBitmapProxy.State state, Drawable drawable) {
         mUrlBitmap.setDrawableState(state, drawable);
     }
 

@@ -23,7 +23,7 @@ import com.org.source.eventbus.EventBus;
 import com.org.source.plugin.rss.RSSController.RSSEventType;
 import com.org.source.plugin.rss.RSSController.RSSEvent;
 import com.org.source.plugin.rss.model.RSSData;
-import com.org.source.widget.UrlImageView.UrlImageView;
+import com.org.source.widget.NetImageView.NetImageView;
 import com.org.source.window.Window;
 import com.org.source.window.AbstractWindowSwiper.OnInterceptMoveEventListener;
 
@@ -171,7 +171,7 @@ public class RSSMainWindow extends Window
     
     public static class RSSView extends LinearLayout
     {
-        private UrlImageView mImageView;
+        private NetImageView mImageView;
         private TextView mTitle;
         
         public RSSView(Context context)
@@ -187,7 +187,7 @@ public class RSSMainWindow extends Window
             int padding = ScreenUtils.dpToPxInt(10);
             setPadding(padding, padding, padding, padding);
             
-            mImageView = new UrlImageView(context);
+            mImageView = new NetImageView(context);
             addView(mImageView, ScreenUtils.dpToPxInt(150), ScreenUtils.dpToPxInt(90));
             
             mTitle = new TextView(context);

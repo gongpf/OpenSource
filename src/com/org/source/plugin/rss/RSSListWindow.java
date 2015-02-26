@@ -26,7 +26,7 @@ import com.org.source.plugin.rss.RSSController.RSSEventType;
 import com.org.source.plugin.rss.RSSController.RSSEvent;
 import com.org.source.plugin.rss.model.RSSData;
 import com.org.source.plugin.rss.model.RSSItem;
-import com.org.source.widget.UrlImageView.UrlImageView;
+import com.org.source.widget.NetImageView.NetImageView;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshBase;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshListView;
@@ -192,7 +192,7 @@ public class RSSListWindow extends Window
     {
         private TextView mTitle;
         private TextView mTime;
-        private UrlImageView mImageView;
+        private NetImageView mImageView;
         
         public RSSView(Context context)
         {
@@ -222,7 +222,7 @@ public class RSSListWindow extends Window
             timeLayoutParams.topMargin = ScreenUtils.dpToPxInt(10);
             textContainer.addView(mTime, timeLayoutParams);
             
-            mImageView = new UrlImageView(context);
+            mImageView = new NetImageView(context);
             
             addView(textContainer, new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1));
             addView(mImageView, ScreenUtils.dpToPxInt(100), ScreenUtils.dpToPxInt(60));

@@ -6,7 +6,7 @@ import com.org.source.event.ISystemEventHandler;
 import com.org.source.eventbus.EventBus;
 import com.org.source.sm.model.Article;
 import com.org.source.sm.model.ArticleImage;
-import com.org.source.widget.UrlImageWindow;
+import com.org.source.widget.NetImageWindow;
 import com.org.source.window.WindowManager;
 import com.org.source.window.WindowManager.WindowEvent;
 
@@ -34,10 +34,10 @@ public class SMController implements ISystemEventHandler
         return mWebViewWindow;
     }
 
-    private UrlImageWindow mUrlImageWindow;
-    private UrlImageWindow getUrlImageWindow() {
+    private NetImageWindow mUrlImageWindow;
+    private NetImageWindow getUrlImageWindow() {
         if (null == mUrlImageWindow) {
-            mUrlImageWindow = new UrlImageWindow();
+            mUrlImageWindow = new NetImageWindow();
         }
         return mUrlImageWindow;
     }
@@ -66,7 +66,7 @@ public class SMController implements ISystemEventHandler
     {
         WindowEvent windowEvent = new WindowEvent();
         windowEvent.mEventType = WindowManager.EventType.PUSHWINDOW;
-        UrlImageWindow window = new UrlImageWindow();
+        NetImageWindow window = getUrlImageWindow();
         window.update(list);
         windowEvent.mObject = window;
         EventBus.getDefault().post(windowEvent);

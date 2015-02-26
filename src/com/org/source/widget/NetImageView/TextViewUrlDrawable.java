@@ -1,4 +1,4 @@
-package com.org.source.widget.UrlImageView;
+package com.org.source.widget.NetImageView;
 
 import java.lang.ref.WeakReference;
 
@@ -9,21 +9,21 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.widget.TextView;
 
-import com.org.source.widget.UrlImageView.UrlBitmapProxy.UrlBitmapCallback;
+import com.org.source.widget.NetImageView.NetBitmapProxy.UrlBitmapCallback;
 
 public class TextViewUrlDrawable extends BitmapDrawable implements
         UrlBitmapCallback {
     private final WeakReference<TextView> mTextViewRef;
 
     private Drawable mDrawable;
-    private final UrlBitmapProxy mUrlBitmap;
+    private final NetBitmapProxy mUrlBitmap;
 
     @SuppressWarnings("deprecation")
     public TextViewUrlDrawable(TextView textView, String url) {
         super();
         mTextViewRef = new WeakReference<TextView>(textView);
         mDrawable = new ColorDrawable(Color.YELLOW);
-        mUrlBitmap = new UrlBitmapProxy(url, this);
+        mUrlBitmap = new NetBitmapProxy(url, this);
     }
 
     public void setImageUrl(String imageUrl) {
@@ -56,7 +56,7 @@ public class TextViewUrlDrawable extends BitmapDrawable implements
         mDrawable.draw(canvas);
     }
 
-    public void setInitImageDrawable(UrlBitmapProxy.State state,
+    public void setInitImageDrawable(NetBitmapProxy.State state,
             Drawable drawable) {
         mUrlBitmap.setDrawableState(state, drawable);
     }

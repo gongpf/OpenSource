@@ -10,24 +10,24 @@ import android.widget.TextView;
 
 import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
-import com.org.source.widget.UrlImageView.UrlImageView;
+import com.org.source.widget.NetImageView.NetImageView;
 
-public class UrlImageViewExt extends FrameLayout{
+public class NetImageItem extends FrameLayout{
     
-    private UrlImageView mUrlImageView;
+    private NetImageView mUrlImageView;
     private TextView mTitleView;
     private TextView mDescription;
     private ScrollView mDescriptionScrollView;
     private LinearLayout mContainerLayout;
 
-    public UrlImageViewExt() {
+    public NetImageItem() {
         super(ContextManager.getContext());
         init();
     }
     
     private void init(){
         setBackgroundColor(Color.BLACK);
-        mUrlImageView = new UrlImageView(ContextManager.getContext());
+        mUrlImageView = new NetImageView(ContextManager.getContext());
         addView(mUrlImageView);
         
         mContainerLayout = new LinearLayout(ContextManager.getContext());
@@ -63,5 +63,9 @@ public class UrlImageViewExt extends FrameLayout{
     
     public void setImageUrl(String url) {
         mUrlImageView.setImageUrl(url);
+    }
+    
+    public void recyle() {
+        mUrlImageView.setImageUrl(null);
     }
 }

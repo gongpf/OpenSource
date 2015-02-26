@@ -10,15 +10,15 @@ import com.org.source.widget.ViewPager.ViewPager;
 import com.org.source.window.Window;
 import com.org.source.window.AbstractWindowSwiper.OnInterceptMoveEventListener;
 
-public class UrlImageWindow extends Window {
+public class NetImageWindow extends Window {
 
-    private UrlImageViewReader mImageViewReader;
+    private NetImageReader mImageViewReader;
     private int mPagerPosition;
     private int mPagerOffsetPixels;
 
-    public UrlImageWindow() {
+    public NetImageWindow() {
         super(ContextManager.getContext());
-        mImageViewReader = new UrlImageViewReader();
+        mImageViewReader = new NetImageReader();
         setContentView(mImageViewReader, new LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         setInterceptMoveEventListener(mInterceptMoveEventListener);
