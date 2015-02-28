@@ -73,6 +73,7 @@ public class HomeWindow extends Window
     @Override
     public void onWindowAttached()
     {
+        mSmMainWidget.loadData();
         mSmMainWidget.requestAllChannel();
     }
 

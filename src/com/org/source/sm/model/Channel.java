@@ -32,6 +32,13 @@ public class Channel {
 
     // KEEP FIELDS - put your custom fields here
     // KEEP FIELDS END
+    
+    public void save() {
+        if (null == myDao) {
+            myDao = DaoHelper.getDaoSession().getChannelDao();
+        }
+        myDao.insertOrReplace(this);
+    }
 
     public Channel() {
     }

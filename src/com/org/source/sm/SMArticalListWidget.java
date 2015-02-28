@@ -33,6 +33,7 @@ import com.org.source.sm.model.Article;
 import com.org.source.sm.model.ArticleList;
 import com.org.source.sm.model.ArticleThumbnail;
 import com.org.source.sm.model.Channel;
+import com.org.source.sm.model.DaoHelper;
 import com.org.source.widget.NetImageView.NetImageView;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshBase;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
@@ -103,9 +104,11 @@ public class SMArticalListWidget extends FrameLayout {
 
     public void setChannel(Channel channel) {
         mChannel = channel;
+        List<Article> articles = mChannel.getArticles();
+        mAdapter.update(articles);
         requestChannel();
     }
-
+    
     private void requestChannel() {
         if (null != mChannel && null != mChannel.getId()) {
             String baseUrl = "http://zzd.sm.cn/appservice/api/v1/channel/@?client_os=android&client_version=1.8.0.1&bid=800&m_ch=006&city=020&sn=409863a83890f78ede8da3c44f20d27a&ftime=1423794052009&recoid=16155304276489967791&count=2&method=new&content_cnt=2";
@@ -121,6 +124,7 @@ public class SMArticalListWidget extends FrameLayout {
             mListView.onRefreshComplete();
             if (null != result && null != result.getData()) {
                 ArticleList list = result.getData();
+                list.save();
                 mAdapter.update(list.getArticle());
             }
         };

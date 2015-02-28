@@ -12,8 +12,10 @@ import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
 import com.org.source.sm.SMRequestAsynTask.SMRequestCallBack;
 import com.org.source.sm.model.AllChannelJsonResonse;
+import com.org.source.sm.model.Article;
 import com.org.source.sm.model.Channel;
 import com.org.source.sm.model.ChannelList;
+import com.org.source.sm.model.DaoHelper;
 import com.org.source.widget.ToolBar;
 import com.org.source.widget.ViewPager.PagerAdapter;
 import com.org.source.widget.ViewPager.ViewPager;
@@ -56,6 +58,11 @@ public class SMMainWidget extends LinearLayout
         
         addView(mViewPager);
     }
+    
+    public void loadData(){
+        List<Channel> channels = DaoHelper.getDaoSession().getChannelDao().loadAll();
+        mPagerAdapter.update(channels);
+    }
 
     public void requestAllChannel() {
         String baseUrl = "http://zzd.sm.cn/appservice/api/v1/channels/?client_os=android&client_version=1.8.0.1&bid=800&m_ch=006&city=020&sn=409863a83890f78ede8da3c44f20d27a&ftime=1423794052009&recoid=16155304276489967791&count=2&method=new&content_cnt=2";
@@ -68,6 +75,7 @@ public class SMMainWidget extends LinearLayout
         public void onFinished(AllChannelJsonResonse result) {
             if (null != result && null != result.getData()) {
                 ChannelList list = result.getData();
+                list.save();
                 mPagerAdapter.update(list.getChannel());
             }
         };
