@@ -44,6 +44,7 @@ public class Article {
     private transient ArticleDao myDao;
 
     private List<ArticleToTag> articleToTag;
+    
     private List<ArticleImage> image;
     private List<ArticleThumbnail> thumbnails;
 

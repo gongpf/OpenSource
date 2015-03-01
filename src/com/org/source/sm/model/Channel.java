@@ -115,9 +115,14 @@ public class Channel {
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
     public List<Article> getArticles() {
         if (articles == null) {
+//            if (daoSession == null) {
+//                throw new DaoException("Entity is detached from DAO context");
+//            }
+            
             if (daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
+                daoSession = DaoHelper.getDaoSession();
             }
+            
             ArticleDao targetDao = daoSession.getArticleDao();
             List<Article> articlesNew = targetDao._queryChannel_Articles(id);
             synchronized (this) {

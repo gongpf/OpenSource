@@ -2,6 +2,7 @@ package com.org.source.sm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +13,11 @@ import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
 import com.org.source.sm.SMRequestAsynTask.SMRequestCallBack;
 import com.org.source.sm.model.AllChannelJsonResonse;
-import com.org.source.sm.model.Article;
+import com.org.source.sm.model.ArticleImage;
 import com.org.source.sm.model.Channel;
 import com.org.source.sm.model.ChannelList;
 import com.org.source.sm.model.DaoHelper;
+import com.org.source.widget.NetImageItem;
 import com.org.source.widget.ToolBar;
 import com.org.source.widget.ViewPager.PagerAdapter;
 import com.org.source.widget.ViewPager.ViewPager;
@@ -61,7 +63,7 @@ public class SMMainWidget extends LinearLayout
     
     public void loadData(){
         List<Channel> channels = DaoHelper.getDaoSession().getChannelDao().loadAll();
-        mPagerAdapter.update(channels);
+        update(channels);
     }
 
     public void requestAllChannel() {
@@ -76,63 +78,42 @@ public class SMMainWidget extends LinearLayout
             if (null != result && null != result.getData()) {
                 ChannelList list = result.getData();
                 list.save();
-                mPagerAdapter.update(list.getChannel());
+                update(list.getChannel());
             }
         };
     };
     
+    public void update(List<Channel> list) {
+        List<Channel> newList = new ArrayList<Channel>();
+        if (null != list) {
+            for (Channel channel : list) {
+                if (channel.getIs_subscribed() && channel.getStatus() == 0) {
+                    newList.add(channel);
+                }
+            }
+        }
+        mPagerAdapter.update(newList);
+        mViewPager.setAdapter(mPagerAdapter);
+        mIndicator.notifyDataSetChanged();
+    }
+    
     private class SMPageAdapter extends PagerAdapter {
-        private List<SMArticalListWidget> mItems = new ArrayList<SMArticalListWidget>();
+        private Stack<SMArticalListWidget> mRecylerViews = new Stack<SMArticalListWidget>();
+        private List<Channel> mItems = new ArrayList<Channel>();
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return mItems.get(position).getTitle();
+            return mItems.get(position).getName();
         }
 
-        public void update(List<Channel> channels) {
-            if (null == channels || channels.size() < 0) {
+        public void update(List<Channel> list) {
+            if (null == list || list.size() < 0) {
                 mItems.clear();
-                notifyUi();
-                return ;
+            } else {
+                mItems = list; 
             }
-            
-            List<Channel> removeList = new ArrayList<Channel>();
-            for (Channel channel : channels) {
-                if (1 == channel.getStatus() || !channel.getIs_subscribed()){
-                    removeList.add(channel);
-                }
-            }
-
-            for (Channel channel : removeList) {
-                channels.remove(channel);
-            }
-            
-            removeList.clear();
-            
-            int nChannelCount = channels.size();
-
-            while (mItems.size() < nChannelCount) {
-               mItems.add(new SMArticalListWidget()); 
-            }
-
-            while (mItems.size() > nChannelCount) {
-               mItems.remove(0); 
-            }
-
-            for (int i = 0; i < nChannelCount; i++) {
-                SMArticalListWidget widget = mItems.get(i);
-                Channel channel = channels.get(i);
-                widget.setChannel(channel);
-            }
-            
-            notifyUi();
         }
         
-        private void notifyUi() {
-            notifyDataSetChanged();
-            mIndicator.notifyDataSetChanged();
-            invalidate();
-        }
         @Override
         public int getCount() {
             return null == mItems ? 0 : mItems.size();
@@ -140,13 +121,24 @@ public class SMMainWidget extends LinearLayout
 
         @Override  
         public void destroyItem(ViewGroup container, int position, Object object)   {     
-            container.removeView(mItems.get(position)); 
+            SMArticalListWidget view = (SMArticalListWidget) object;
+            container.removeView(view);
+            view.recyle();
+            mRecylerViews.add(view);
         }  
   
         @Override  
         public Object instantiateItem(ViewGroup container, int position) {    
-             container.addView(mItems.get(position), 0); 
-             return mItems.get(position);  
+            SMArticalListWidget view = null;
+            if (!mRecylerViews.empty()) {
+                view = mRecylerViews.pop();
+            } else {
+                view = new SMArticalListWidget();
+            }
+            Channel channel = mItems.get(position);
+            view.setChannel(channel);
+            container.addView(view);
+            return view; 
         }  
 
         @Override  

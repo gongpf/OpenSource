@@ -16,9 +16,11 @@ public class ChannelList {
     public void save() {
         if (null != channel && channel.size() > 0) {
             DaoHelper.getDaoSession().getChannelDao().getDatabase().beginTransaction();
+            
             for (Channel channelItem : channel) {
                 channelItem.save();
             }
+            
             DaoHelper.getDaoSession().getChannelDao().getDatabase().setTransactionSuccessful();
             DaoHelper.getDaoSession().getChannelDao().getDatabase().endTransaction();
         }

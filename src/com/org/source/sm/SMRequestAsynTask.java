@@ -53,7 +53,6 @@ public class SMRequestAsynTask<T> extends AsyncTask<String, Void, T>{
     }
     
     public static interface SMRequestCallBack<T> {
-        
         public void onFinished(T result);
     }
 }

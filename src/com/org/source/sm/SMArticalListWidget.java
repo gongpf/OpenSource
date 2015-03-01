@@ -16,9 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ImageView.ScaleType;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,7 +33,6 @@ import com.org.source.sm.model.Article;
 import com.org.source.sm.model.ArticleList;
 import com.org.source.sm.model.ArticleThumbnail;
 import com.org.source.sm.model.Channel;
-import com.org.source.sm.model.DaoHelper;
 import com.org.source.widget.NetImageView.NetImageView;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshBase;
 import com.org.source.widget.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
@@ -111,24 +110,46 @@ public class SMArticalListWidget extends FrameLayout {
     
     private void requestChannel() {
         if (null != mChannel && null != mChannel.getId()) {
-            String baseUrl = "http://zzd.sm.cn/appservice/api/v1/channel/@?client_os=android&client_version=1.8.0.1&bid=800&m_ch=006&city=020&sn=409863a83890f78ede8da3c44f20d27a&ftime=1423794052009&recoid=16155304276489967791&count=2&method=new&content_cnt=2";
-            new SMRequestAsynTask<ChannelJsonResonse>(ChannelJsonResonse.class,
-                    mCallback).execute(baseUrl.replaceFirst("@", mChannel
-                    .getId().toString()));
+            new SMRequestChannleAsynTask(mChannel.getId()).execute();
         }
     }
 
-    private SMRequestCallBack<ChannelJsonResonse> mCallback = new SMRequestCallBack<ChannelJsonResonse>() {
+    private class SMRequestChannleAsynTask extends SMRequestAsynTask<ChannelJsonResonse> {
+        private Long mChannelId = null;
+        public SMRequestChannleAsynTask(Long channelId)
+        {
+            super(ChannelJsonResonse.class, null);
+            mChannelId = channelId;
+        }
+        
         @Override
-        public void onFinished(ChannelJsonResonse result) {
-            mListView.onRefreshComplete();
+        protected ChannelJsonResonse doInBackground(String... params)
+        {
+            String baseUrl = "http://zzd.sm.cn/appservice/api/v1/channel/@?client_os=android&client_version=1.8.0.1&bid=800&m_ch=006&city=020&sn=409863a83890f78ede8da3c44f20d27a&ftime=1423794052009&recoid=16155304276489967791&count=2&method=new&content_cnt=2";
+            ChannelJsonResonse result = super.doInBackground(baseUrl.replaceFirst("@", mChannelId.toString()));
             if (null != result && null != result.getData()) {
                 ArticleList list = result.getData();
                 list.save();
-                mAdapter.update(list.getArticle());
             }
-        };
-    };
+            return result;
+        }
+        
+        @Override
+        protected void onPostExecute(ChannelJsonResonse result)
+        {
+            mListView.onRefreshComplete();
+            if (null != result && null != result.getData()
+                    && null != mChannel && mChannel.getId().equals(mChannelId))
+            {
+                mAdapter.update(result.getData().getArticle());
+            }
+        }
+    }
+    
+    public void recyle() {
+        mChannel = null;
+        mAdapter.update(null);
+    }
 
     public static class SMAdapter extends BaseAdapter {
         private List<Article> mItems = new ArrayList<Article>();
@@ -137,9 +158,6 @@ public class SMArticalListWidget extends FrameLayout {
         private static final int IMAGE_TYPE = 1;
 
         public void update(List<Article> items) {
-            if (null != mItems) {
-                mItems.clear();
-            }
             mItems = items;
             notifyDataSetChanged();
         }
@@ -364,9 +382,5 @@ public class SMArticalListWidget extends FrameLayout {
             }
             mImageView.setLayoutParams(params);
         }
-    }
-
-    public CharSequence getTitle() {
-        return null == mChannel ? "" : mChannel.getName();
     }
 }
