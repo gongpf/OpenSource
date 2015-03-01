@@ -24,4 +24,20 @@ public class DaoHelper {
         }
         return sDaoSession;
     }
+    
+    static public void destory() {
+        if (null != sDatabase) {
+            sDatabase.close();
+            sDatabase = null;
+        }
+        
+        if (sDaoMaster != null) {
+            sDaoMaster = null;
+        }
+        
+        if (sDaoSession != null) {
+            sDaoSession.clear();
+            sDaoSession = null;
+        }
+    }
 }

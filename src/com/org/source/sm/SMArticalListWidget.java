@@ -138,6 +138,7 @@ public class SMArticalListWidget extends FrameLayout {
         protected void onPostExecute(ChannelJsonResonse result)
         {
             mListView.onRefreshComplete();
+            
             if (null != result && null != result.getData()
                     && null != mChannel && mChannel.getId().equals(mChannelId))
             {

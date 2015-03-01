@@ -9,6 +9,7 @@ import com.org.source.event.ISystemEventHandler.SystemEvent;
 import com.org.source.eventbus.EventBus;
 import com.org.source.plugin.rss.RSSController;
 import com.org.source.sm.SMController;
+import com.org.source.sm.model.DaoHelper;
 import com.org.source.window.WindowManager;
 
 public class Controller
@@ -39,6 +40,7 @@ public class Controller
     public void destory()
     {
         ContextManager.destroy();
+        DaoHelper.destory();
 
         SystemEvent systemEvent = new SystemEvent();
         systemEvent.mEventType = ISystemEventHandler.EventType.DESTORY;
