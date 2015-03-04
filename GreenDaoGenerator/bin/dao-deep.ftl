@@ -26,7 +26,7 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
             SqlUtils.appendColumns(builder, "T", getAllColumns());
             builder.append(',');
 <#list entity.toOneRelations as toOne>
-            SqlUtils.appendColumns(builder, "T${toOne_index}", daoSession.get${toOne.targetEntity.classNameDao}().getAllColumns());
+            SqlUtils.appendColumns(builder, "T${toOne_index}", DaoHelper.getDaoSession().get${toOne.targetEntity.classNameDao}().getAllColumns());
 <#if toOne_has_next>
             builder.append(',');
 </#if>
@@ -47,14 +47,14 @@ along with greenDAO Generator.  If not, see <http://www.gnu.org/licenses/>.
         int offset = getAllColumns().length;
 
 <#list entity.toOneRelations as toOne>
-        ${toOne.targetEntity.className} ${toOne.name} = loadCurrentOther(daoSession.get${toOne.targetEntity.classNameDao}(), cursor, offset);
+        ${toOne.targetEntity.className} ${toOne.name} = loadCurrentOther(DaoHelper.getDaoSession().get${toOne.targetEntity.classNameDao}(), cursor, offset);
 <#if toOne.fkProperties[0].notNull>         if(${toOne.name} != null) {
     </#if>        entity.set${toOne.name?cap_first}(${toOne.name});
 <#if toOne.fkProperties[0].notNull>
         }
 </#if>
 <#if toOne_has_next>
-        offset += daoSession.get${toOne.targetEntity.classNameDao}().getAllColumns().length;
+        offset += DaoHelper.getDaoSession().get${toOne.targetEntity.classNameDao}().getAllColumns().length;
 </#if>
 
 </#list>

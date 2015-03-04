@@ -26,18 +26,11 @@ public class TagDao extends AbstractDao<Tag, String> {
         public final static Property Tag = new Property(0, String.class, "tag", true, "TAG");
     };
 
-    private DaoSession daoSession;
-
 
     public TagDao(DaoConfig config) {
         super(config);
     }
     
-    public TagDao(DaoConfig config, DaoSession daoSession) {
-        super(config, daoSession);
-        this.daoSession = daoSession;
-    }
-
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
@@ -56,12 +49,6 @@ public class TagDao extends AbstractDao<Tag, String> {
     protected void bindValues(SQLiteStatement stmt, Tag entity) {
         stmt.clearBindings();
         stmt.bindString(1, entity.getTag());
-    }
-
-    @Override
-    protected void attachEntity(Tag entity) {
-        super.attachEntity(entity);
-        entity.__setDaoSession(daoSession);
     }
 
     /** @inheritdoc */

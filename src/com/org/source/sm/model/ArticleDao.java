@@ -38,7 +38,7 @@ public class ArticleDao extends AbstractDao<Article, String> {
         public final static Property Original_url = new Property(9, String.class, "original_url", false, "ORIGINAL_URL");
         public final static Property Publish_time = new Property(10, String.class, "publish_time", false, "PUBLISH_TIME");
         public final static Property Reco_type = new Property(11, Short.class, "reco_type", false, "RECO_TYPE");
-        public final static Property Recoid = new Property(12, Long.class, "recoid", false, "RECOID");
+        public final static Property Recoid = new Property(12, String.class, "recoid", false, "RECOID");
         public final static Property Site = new Property(13, String.class, "site", false, "SITE");
         public final static Property Source_name = new Property(14, String.class, "source_name", false, "SOURCE_NAME");
         public final static Property Summary = new Property(15, String.class, "summary", false, "SUMMARY");
@@ -49,19 +49,12 @@ public class ArticleDao extends AbstractDao<Article, String> {
         public final static Property Valid = new Property(20, Boolean.class, "valid", false, "VALID");
     };
 
-    private DaoSession daoSession;
-
     private Query<Article> channel_ArticlesQuery;
 
     public ArticleDao(DaoConfig config) {
         super(config);
     }
     
-    public ArticleDao(DaoConfig config, DaoSession daoSession) {
-        super(config, daoSession);
-        this.daoSession = daoSession;
-    }
-
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
@@ -78,7 +71,7 @@ public class ArticleDao extends AbstractDao<Article, String> {
                 "'ORIGINAL_URL' TEXT," + // 9: original_url
                 "'PUBLISH_TIME' TEXT," + // 10: publish_time
                 "'RECO_TYPE' INTEGER," + // 11: reco_type
-                "'RECOID' INTEGER," + // 12: recoid
+                "'RECOID' TEXT," + // 12: recoid
                 "'SITE' TEXT," + // 13: site
                 "'SOURCE_NAME' TEXT," + // 14: source_name
                 "'SUMMARY' TEXT," + // 15: summary
@@ -152,9 +145,9 @@ public class ArticleDao extends AbstractDao<Article, String> {
             stmt.bindLong(12, reco_type);
         }
  
-        Long recoid = entity.getRecoid();
+        String recoid = entity.getRecoid();
         if (recoid != null) {
-            stmt.bindLong(13, recoid);
+            stmt.bindString(13, recoid);
         }
  
         String site = entity.getSite();
@@ -198,12 +191,6 @@ public class ArticleDao extends AbstractDao<Article, String> {
         }
     }
 
-    @Override
-    protected void attachEntity(Article entity) {
-        super.attachEntity(entity);
-        entity.__setDaoSession(daoSession);
-    }
-
     /** @inheritdoc */
     @Override
     public String readKey(Cursor cursor, int offset) {
@@ -226,7 +213,7 @@ public class ArticleDao extends AbstractDao<Article, String> {
             cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // original_url
             cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // publish_time
             cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11), // reco_type
-            cursor.isNull(offset + 12) ? null : cursor.getLong(offset + 12), // recoid
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // recoid
             cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // site
             cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // source_name
             cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // summary
@@ -254,7 +241,7 @@ public class ArticleDao extends AbstractDao<Article, String> {
         entity.setOriginal_url(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
         entity.setPublish_time(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
         entity.setReco_type(cursor.isNull(offset + 11) ? null : cursor.getShort(offset + 11));
-        entity.setRecoid(cursor.isNull(offset + 12) ? null : cursor.getLong(offset + 12));
+        entity.setRecoid(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
         entity.setSite(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
         entity.setSource_name(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
         entity.setSummary(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));

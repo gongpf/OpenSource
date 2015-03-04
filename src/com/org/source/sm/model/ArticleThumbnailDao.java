@@ -39,10 +39,6 @@ public class ArticleThumbnailDao extends AbstractDao<ArticleThumbnail, Long> {
         super(config);
     }
     
-    public ArticleThumbnailDao(DaoConfig config, DaoSession daoSession) {
-        super(config, daoSession);
-    }
-
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";

@@ -42,10 +42,6 @@ import ${schema.defaultLibPackage}.query.Query;
 import ${schema.defaultLibPackage}.query.QueryBuilder;
 </#if>
 
-<#if entity.javaPackageDao != schema.defaultJavaPackageDao>
-import ${schema.defaultJavaPackageDao}.DaoSession;
-
-</#if>
 <#if entity.additionalImportsDao?has_content>
 <#list entity.additionalImportsDao as additionalImport>
 import ${additionalImport};
@@ -75,10 +71,6 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
 </#list>
     };
 
-<#if entity.active>
-    private DaoSession daoSession;
-
-</#if>
 <#list entity.incomingToManyRelations as toMany>
     private Query<${toMany.targetEntity.className}> ${toMany.sourceEntity.className?uncap_first}_${toMany.name?cap_first}Query;
 </#list>
@@ -87,13 +79,6 @@ public class ${entity.classNameDao} extends AbstractDao<${entity.className}, ${e
         super(config);
     }
     
-    public ${entity.classNameDao}(DaoConfig config, DaoSession daoSession) {
-        super(config, daoSession);
-<#if entity.active>        
-        this.daoSession = daoSession;
-</#if>
-    }
-
 <#if !entity.skipTableCreation>
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
@@ -158,14 +143,6 @@ as property>${property.columnName}<#if property_has_next>,</#if></#list>);");
 </#list>
     }
 
-<#if entity.active>
-    @Override
-    protected void attachEntity(${entity.className} entity) {
-        super.attachEntity(entity);
-        entity.__setDaoSession(daoSession);
-    }
-
-</#if>
     /** @inheritdoc */
     @Override
     public ${entity.pkType} readKey(Cursor cursor, int offset) {

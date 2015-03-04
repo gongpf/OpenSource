@@ -31,18 +31,11 @@ public class ChannelDao extends AbstractDao<Channel, Long> {
         public final static Property Show_type = new Property(5, Short.class, "show_type", false, "SHOW_TYPE");
     };
 
-    private DaoSession daoSession;
-
 
     public ChannelDao(DaoConfig config) {
         super(config);
     }
     
-    public ChannelDao(DaoConfig config, DaoSession daoSession) {
-        super(config, daoSession);
-        this.daoSession = daoSession;
-    }
-
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
@@ -91,12 +84,6 @@ public class ChannelDao extends AbstractDao<Channel, Long> {
         if (show_type != null) {
             stmt.bindLong(6, show_type);
         }
-    }
-
-    @Override
-    protected void attachEntity(Channel entity) {
-        super.attachEntity(entity);
-        entity.__setDaoSession(daoSession);
     }
 
     /** @inheritdoc */

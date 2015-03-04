@@ -64,7 +64,7 @@ public class DaoSession extends AbstractDaoSession {
 </#list>        
 <#list schema.entities as entity>
         ${entity.classNameDao?uncap_first} = new ${entity.classNameDao}<#--
--->(${entity.classNameDao?uncap_first}Config, this);
+-->(${entity.classNameDao?uncap_first}Config);
 </#list>        
 
 <#list schema.entities as entity>

@@ -71,7 +71,7 @@ public class DaoGeneratorMain {
         article.addStringProperty("original_url");
         article.addStringProperty("publish_time");
         article.addShortProperty("reco_type");
-        article.addLongProperty("recoid");
+        article.addStringProperty("recoid");
         article.addStringProperty("site");
         article.addStringProperty("source_name");
         

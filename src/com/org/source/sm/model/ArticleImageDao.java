@@ -45,10 +45,6 @@ public class ArticleImageDao extends AbstractDao<ArticleImage, Long> {
         super(config);
     }
     
-    public ArticleImageDao(DaoConfig config, DaoSession daoSession) {
-        super(config, daoSession);
-    }
-
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";

@@ -33,8 +33,6 @@ public class ArticleToTagDao extends AbstractDao<ArticleToTag, Long> {
         public final static Property Tid = new Property(2, String.class, "tid", false, "TID");
     };
 
-    private DaoSession daoSession;
-
     private Query<ArticleToTag> article_ArticleToTagQuery;
     private Query<ArticleToTag> tag_ArticleToTagQuery;
 
@@ -42,11 +40,6 @@ public class ArticleToTagDao extends AbstractDao<ArticleToTag, Long> {
         super(config);
     }
     
-    public ArticleToTagDao(DaoConfig config, DaoSession daoSession) {
-        super(config, daoSession);
-        this.daoSession = daoSession;
-    }
-
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
@@ -73,12 +66,6 @@ public class ArticleToTagDao extends AbstractDao<ArticleToTag, Long> {
         }
         stmt.bindString(2, entity.getAid());
         stmt.bindString(3, entity.getTid());
-    }
-
-    @Override
-    protected void attachEntity(ArticleToTag entity) {
-        super.attachEntity(entity);
-        entity.__setDaoSession(daoSession);
     }
 
     /** @inheritdoc */
@@ -164,9 +151,9 @@ public class ArticleToTagDao extends AbstractDao<ArticleToTag, Long> {
             StringBuilder builder = new StringBuilder("SELECT ");
             SqlUtils.appendColumns(builder, "T", getAllColumns());
             builder.append(',');
-            SqlUtils.appendColumns(builder, "T0", daoSession.getTagDao().getAllColumns());
+            SqlUtils.appendColumns(builder, "T0", DaoHelper.getDaoSession().getTagDao().getAllColumns());
             builder.append(',');
-            SqlUtils.appendColumns(builder, "T1", daoSession.getArticleDao().getAllColumns());
+            SqlUtils.appendColumns(builder, "T1", DaoHelper.getDaoSession().getArticleDao().getAllColumns());
             builder.append(" FROM ARTICLE_TO_TAG T");
             builder.append(" LEFT JOIN TAG T0 ON T.'TID'=T0.'TAG'");
             builder.append(" LEFT JOIN ARTICLE T1 ON T.'AID'=T1.'ID'");
@@ -180,13 +167,13 @@ public class ArticleToTagDao extends AbstractDao<ArticleToTag, Long> {
         ArticleToTag entity = loadCurrent(cursor, 0, lock);
         int offset = getAllColumns().length;
 
-        Tag tag = loadCurrentOther(daoSession.getTagDao(), cursor, offset);
+        Tag tag = loadCurrentOther(DaoHelper.getDaoSession().getTagDao(), cursor, offset);
          if(tag != null) {
             entity.setTag(tag);
         }
-        offset += daoSession.getTagDao().getAllColumns().length;
+        offset += DaoHelper.getDaoSession().getTagDao().getAllColumns().length;
 
-        Article article = loadCurrentOther(daoSession.getArticleDao(), cursor, offset);
+        Article article = loadCurrentOther(DaoHelper.getDaoSession().getArticleDao(), cursor, offset);
          if(article != null) {
             entity.setArticle(article);
         }
