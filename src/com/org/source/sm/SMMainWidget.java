@@ -13,11 +13,10 @@ import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
 import com.org.source.sm.SMRequestAsynTask.SMRequestCallBack;
 import com.org.source.sm.model.AllChannelJsonResonse;
-import com.org.source.sm.model.ArticleImage;
 import com.org.source.sm.model.Channel;
+import com.org.source.sm.model.ChannelListResponse;
 import com.org.source.sm.model.ChannelList;
 import com.org.source.sm.model.DaoHelper;
-import com.org.source.widget.NetImageItem;
 import com.org.source.widget.ToolBar;
 import com.org.source.widget.ViewPager.PagerAdapter;
 import com.org.source.widget.ViewPager.ViewPager;
@@ -68,13 +67,24 @@ public class SMMainWidget extends LinearLayout
 
     public void requestAllChannel() {
         String baseUrl = "http://zzd.sm.cn/appservice/api/v1/channels/?client_os=android&client_version=1.8.0.1&bid=800&m_ch=006&city=020&sn=409863a83890f78ede8da3c44f20d27a&ftime=1423794052009&recoid=16155304276489967791&count=2&method=new&content_cnt=2";
-        new SMRequestAsynTask<AllChannelJsonResonse>(AllChannelJsonResonse.class,
+        new SMRequestAsynTask<ChannelListResponse>(ChannelListResponse.class,
                 mCallback).execute(baseUrl);
     }
     
-    private SMRequestCallBack<AllChannelJsonResonse> mCallback = new SMRequestCallBack<AllChannelJsonResonse>() {
+//    private SMRequestCallBack<AllChannelJsonResonse> mCallback = new SMRequestCallBack<AllChannelJsonResonse>() {
+//        @Override
+//        public void onFinished(AllChannelJsonResonse result) {
+//            if (null != result && null != result.getData()) {
+//                ChannelList list = result.getData();
+//                list.save();
+//                update(list.getChannel());
+//            }
+//        };
+//    };
+
+    private SMRequestCallBack<ChannelListResponse> mCallback = new SMRequestCallBack<ChannelListResponse>() {
         @Override
-        public void onFinished(AllChannelJsonResonse result) {
+        public void onFinished(ChannelListResponse result) {
             if (null != result && null != result.getData()) {
                 ChannelList list = result.getData();
                 list.save();

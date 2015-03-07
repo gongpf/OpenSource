@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import android.R.integer;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -25,12 +24,13 @@ import android.widget.TextView;
 
 import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
+import com.org.source.daojson.DaoJson;
 import com.org.source.eventbus.EventBus;
 import com.org.source.sm.SMController.SMEvent;
 import com.org.source.sm.SMController.SMEventType;
-import com.org.source.sm.SMRequestAsynTask.SMRequestCallBack;
 import com.org.source.sm.model.Article;
 import com.org.source.sm.model.ArticleList;
+import com.org.source.sm.model.ArticleListResponse;
 import com.org.source.sm.model.ArticleThumbnail;
 import com.org.source.sm.model.Channel;
 import com.org.source.widget.NetImageView.NetImageView;
@@ -69,6 +69,7 @@ public class SMArticalListWidget extends FrameLayout {
     private OnRefreshListener<ListView> mOnRefreshListener = new OnRefreshListener<ListView>() {
         @Override
         public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+            DaoJson.test();
             String label = DateUtils.formatDateTime(
                     ContextManager.getAppContext(), System.currentTimeMillis(),
                     DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
@@ -114,19 +115,19 @@ public class SMArticalListWidget extends FrameLayout {
         }
     }
 
-    private class SMRequestChannleAsynTask extends SMRequestAsynTask<ChannelJsonResonse> {
+    private class SMRequestChannleAsynTask extends SMRequestAsynTask<ArticleListResponse> {
         private Long mChannelId = null;
         public SMRequestChannleAsynTask(Long channelId)
         {
-            super(ChannelJsonResonse.class, null);
+            super(ArticleListResponse.class, null);
             mChannelId = channelId;
         }
         
         @Override
-        protected ChannelJsonResonse doInBackground(String... params)
+        protected ArticleListResponse doInBackground(String... params)
         {
             String baseUrl = "http://zzd.sm.cn/appservice/api/v1/channel/@?client_os=android&client_version=1.8.0.1&bid=800&m_ch=006&city=020&sn=409863a83890f78ede8da3c44f20d27a&ftime=1423794052009&recoid=16155304276489967791&count=2&method=new&content_cnt=2";
-            ChannelJsonResonse result = super.doInBackground(baseUrl.replaceFirst("@", mChannelId.toString()));
+            ArticleListResponse result = super.doInBackground(baseUrl.replaceFirst("@", mChannelId.toString()));
             if (null != result && null != result.getData()) {
                 ArticleList list = result.getData();
                 list.save();
@@ -135,7 +136,7 @@ public class SMArticalListWidget extends FrameLayout {
         }
         
         @Override
-        protected void onPostExecute(ChannelJsonResonse result)
+        protected void onPostExecute(ArticleListResponse result)
         {
             mListView.onRefreshComplete();
             
