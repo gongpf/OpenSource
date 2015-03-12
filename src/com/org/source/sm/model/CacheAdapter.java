@@ -5,7 +5,8 @@ import java.util.List;
 
 import android.widget.BaseAdapter;
 
-public abstract class CacheAdapter<K, T> extends BaseAdapter {
+public abstract class CacheAdapter<K, V> extends BaseAdapter {
+
     private static class KeyValue<K, T> {
         public final K mKey;
         public T mValue;
@@ -27,7 +28,7 @@ public abstract class CacheAdapter<K, T> extends BaseAdapter {
         }
     }
 
-    private List<KeyValue<K, T>> mIndexList;
+    private List<KeyValue<K, V>> mIndexList;
     private int mPreLoadRange = 10;
 
     public CacheAdapter() {
@@ -38,10 +39,10 @@ public abstract class CacheAdapter<K, T> extends BaseAdapter {
             throw new RuntimeException("Invalid param");
         }
 
-        mIndexList = new ArrayList<KeyValue<K, T>>();
+        mIndexList = new ArrayList<KeyValue<K, V>>();
 
         for (K key : indexList) {
-            mIndexList.add(new KeyValue<K, T>(key, null));
+            mIndexList.add(new KeyValue<K, V>(key, null));
         }
     }
 
@@ -51,7 +52,7 @@ public abstract class CacheAdapter<K, T> extends BaseAdapter {
         }
 
         for (K key : indexList) {
-            mIndexList.add(new KeyValue<K, T>(key, null));
+            mIndexList.add(new KeyValue<K, V>(key, null));
         }
 
         notifyDataSetChanged();
@@ -63,8 +64,8 @@ public abstract class CacheAdapter<K, T> extends BaseAdapter {
     }
 
     @Override
-    public T getItem(int position) {
-        KeyValue<K, T> keyValue = mIndexList.get(position);
+    public V getItem(int position) {
+        KeyValue<K, V> keyValue = mIndexList.get(position);
 
         if (null == keyValue.mValue) {
             preLoad(position);
@@ -72,7 +73,7 @@ public abstract class CacheAdapter<K, T> extends BaseAdapter {
 
         return keyValue.mValue;
     }
-
+    
     private void preLoad(int pos) {
         int expectedStartPos = Math.max(pos - mPreLoadRange, 0);
         int expectedEndPos = Math.min(pos + mPreLoadRange,
@@ -80,7 +81,7 @@ public abstract class CacheAdapter<K, T> extends BaseAdapter {
         int size = mIndexList.size();
 
         for (int i = 0; i < size; i++) {
-            KeyValue<K, T> keyValue = mIndexList.get(i);
+            KeyValue<K, V> keyValue = mIndexList.get(i);
 
             if (i < expectedStartPos || i > expectedEndPos) {
                 keyValue.clear();
@@ -98,5 +99,5 @@ public abstract class CacheAdapter<K, T> extends BaseAdapter {
         mPreLoadRange = range;
     }
 
-    public abstract T getValueInner(K index);
+    public abstract V getValueInner(K index);
 }

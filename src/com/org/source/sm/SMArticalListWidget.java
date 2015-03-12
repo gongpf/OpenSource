@@ -24,7 +24,8 @@ import android.widget.TextView;
 
 import com.org.source.base.ContextManager;
 import com.org.source.common.util.ScreenUtils;
-import com.org.source.daojson.DaoJson;
+import com.org.source.dao.json.DaoJson;
+import com.org.source.dao.json.DaoJsonTest;
 import com.org.source.eventbus.EventBus;
 import com.org.source.sm.SMController.SMEvent;
 import com.org.source.sm.SMController.SMEventType;
@@ -69,7 +70,7 @@ public class SMArticalListWidget extends FrameLayout {
     private OnRefreshListener<ListView> mOnRefreshListener = new OnRefreshListener<ListView>() {
         @Override
         public void onRefresh(PullToRefreshBase<ListView> refreshView) {
-            DaoJson.test();
+            DaoJsonTest.test();
             String label = DateUtils.formatDateTime(
                     ContextManager.getAppContext(), System.currentTimeMillis(),
                     DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
